@@ -1,0 +1,32 @@
+* {padding: 0;margin: 0;border: 0;}
+
+body {
+	width: 100vw;
+	height: 100vh;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#MainGrid {
+	background-color: silver;
+	width: min(100vw,100vh);
+	height: min(100vw,100vh);
+
+	display: grid;
+	grid-template-columns: repeat(8, 1fr);
+	grid-template-rows: repeat(8, 1fr);
+}
+
+.GridSquare:nth-child(-2n+7), 
+.GridSquare:nth-child(8) ~ div:nth-child(-2n+16), 
+.GridSquare:nth-child(15) ~ div:nth-child(-2n+23), 
+.GridSquare:nth-child(25) ~ div:nth-child(-2n+32), 
+.GridSquare:nth-child(31) ~ div:nth-child(-2n+39), 
+.GridSquare:nth-child(41) ~ div:nth-child(-2n+48), 
+.GridSquare:nth-child(47) ~ div:nth-child(-2n+55), 
+.GridSquare:nth-child(57) ~ div:nth-child(-2n+64){
+  background-color: #000000;
+  color: #ffffff;
+}
