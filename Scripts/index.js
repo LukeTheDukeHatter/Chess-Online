@@ -7,3 +7,8 @@ for (let x = 0; x < 64; x++) {
 	ChessGrid.appendChild(y);
 	console.log
 }
+
+// https://www.chessprogramming.org/Minimax
+// https://www.chessprogramming.org/Negamax
+// https://www.chessprogramming.org/Make_Move
+// https://www.chessprogramming.org/Unmake_Move
