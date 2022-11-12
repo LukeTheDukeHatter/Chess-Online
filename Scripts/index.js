@@ -62,6 +62,19 @@ for (let x = 0; x < 64; x++) { 										// Creates all 64 grid squares
 
 let items = document.querySelectorAll('.GridSquare');
 
+// Grid Point Conversion Map
+const GPCM = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7,
+			   0:'a',1:'b',2:'c',3:'d',4:'e',5:'f',6:'g',7:'h'};
+
+function isLocalValid(x,y) { return (x >= 0) && (x <= 7) && (y >= 1) && (y <= 8) };
+function isSpotFree(id) {
+	return (
+		document.getElementById(id).hasChildNodes() == false) ||
+		( document.getElementById(id).hasChildNodes() == true &&
+		  document.getElementById(id).firstChild.src.split('/')[5].split('.')[0][0] != pname[0] ) 
+}
+
+
 function handleDragStart(e) {
 	this.firstChild.style.opacity = '0.4'
 
@@ -71,7 +84,6 @@ function handleDragStart(e) {
 	e.dataTransfer.setData('text/html', this.innerHTML);
 
 	let GRef = this.id;
-	let TheStuff = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7,0:'a',1:'b',2:'c',3:'d',4:'e',5:'f',6:'g',7:'h'};
 	let Order = ['a','b','c','d','e','f','g','h']
 
 	pname = this.firstChild.src.split('/')[5].split('.')[0];
@@ -89,39 +101,52 @@ function handleDragStart(e) {
 
 		xnums.forEach((x) => {
 			ynums.forEach((y) => {
-				let newx = (TheStuff[fp]+x); // The x value of the next point we're checking
+				let newx = (GPCM[fp]+x); // The x value of the next point we're checking
 				let newy = (parseInt(sp)+y); // The y value of the next point we're checking
 
-				let dx = Math.abs(TheStuff[fp]-newx); // X distance from original
+				let dx = Math.abs(GPCM[fp]-newx); // X distance from original
 				let dy = Math.abs(parseInt(sp)-newy); // Y distance from original
 
 				let pyth = ((dx*dx)+(dy*dy)); // Pythagorean theorem for distance from initial piece coords to new coords, Will be 5 if both dx and dy are 2 and 1, either way round
 
-				if ( // If the new coords are within the grid, and is the correct distance away
-						newx >= 0 &&
-						newx <= 7 &&
-						newy >= 1 &&
-						newy <= 8 &&
-						pyth == 5
-					) { 
-					if  ( // If the square is empty, or has an opponent piece
-							(document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == false) ||
-							( 
-								document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true &&
-								document.getElementById(`${TheStuff[newx]}${newy}`).firstChild.src.split('/')[5].split('.')[0][0] != pname[0]
-							) 
-					    )  {
-						possible.push(`${TheStuff[newx]}${newy}`);
+
+				// If the new coords are within the grid, and is the correct distance away
+				if ( isLocalValid(newx,newy) && pyth == 5 ) { 	
+					if  ( isSpotFree(`${GPCM[newx]}${newy}`) )  {
+						possible.push(`${GPCM[newx]}${newy}`);
 					}
 				}
-
 			});
 		});
 	
 	} else if (PieceNames[pname] == 'Bishop') {
 
+		let fp = GRef[0]; // The x grid reference of the original piece
+		let sp = GRef[1]; // The y grid reference of the original piece
+
+		for (let i = 1; i < 9; i++) {
+
+			let opts = [[1,1],[-1,1],[1,-1],[-1,-1]];
+
+			opts.forEach((opt) => {
+
+				let newx = (GPCM[fp]+(i*Opt[0])); // The x value of the next point we're checking
+				let newy = (parseInt(sp)+(i*Opt[1])); // The y value of the next point we're checking
+				
+				if ( isLocalValid(newx,newy) ) { 	
+					if  ( isSpotFree(`${GPCM[newx]}${newy}`) )  {
+						possible.push(`${GPCM[newx]}${newy}`);
+					}
+				}
+
+			});
+
+
+			
+		}
+
 	} else if (PieceNames[pname] == 'Rook') {
-		let fp = TheStuff[GRef[0]]; 
+		let fp = GPCM[GRef[0]]; 
 		let sp = parseInt(GRef[1]); 
 
 		var uip; // uip Stands for Uninpaired, used to stop checking squares in a direction once a piece is found to be blocking the path
@@ -132,82 +157,63 @@ function handleDragStart(e) {
 			let newy = sp;
 
 			if ( newx >= 0 && newx <= 7 ) { 
-				if (document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true) { uip = false; }
+				if (document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() == true) { uip = false; }
 				if (uip) {
-					if  (
-							(document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == false) ||
-							( 
-								document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true &&
-								document.getElementById(`${TheStuff[newx]}${newy}`).firstChild.src.split('/')[5].split('.')[0][0] != pname[0]
-							) 
-						)  {
-						possible.push(`${TheStuff[newx]}${newy}`);
+					if ( isSpotFree(`${GPCM[newx]}${newy}`) )  {
+						possible.push(`${GPCM[newx]}${newy}`);
 					}
 				}
 			}
 		}								// End of right check
+		
 		uip = true;
 		for (let x = -1; x > -9; x--) { 	// Checks all squares to the left of the piece
 			let newx = fp+x;
 			let newy = sp;
 
 			if ( newx >= 0 && newx <= 7 ) { 
-				if (document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true) { uip = false; }
+				if (document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() == true) { uip = false; }
 				if (uip) {
-					if  (
-							(document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == false) ||
-							( 
-								document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true &&
-								document.getElementById(`${TheStuff[newx]}${newy}`).firstChild.src.split('/')[5].split('.')[0][0] != pname[0]
-							) 
-						)  {
-						possible.push(`${TheStuff[newx]}${newy}`);
+					if ( isSpotFree(`${GPCM[newx]}${newy}`) )  {
+						possible.push(`${GPCM[newx]}${newy}`);
 					}
 				}
 			}
 		} 								// End of left check
+		
 		uip = true;
 		for (let y = 1; y < 9; y++) { 	// Checks all squares above the piece
 			let newx = fp;
 			let newy = sp+y;
 			
 			if ( newy >= 1 && newy <= 8 ) {
-				if (document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true) { uip = false; }
+				if (document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() == true) { uip = false; }
 				if (uip) {
-					if  (
-							(document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == false) ||
-							( 
-								document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true &&
-								document.getElementById(`${TheStuff[newx]}${newy}`).firstChild.src.split('/')[5].split('.')[0][0] != pname[0]
-							) 
-						)  {
-						possible.push(`${TheStuff[newx]}${newy}`);
+					if ( isSpotFree(`${GPCM[newx]}${newy}`) )  {
+						possible.push(`${GPCM[newx]}${newy}`);
 					}
 				}
 			}
-		} 								// End of up check
+		}								// End of up check
+		
 		uip = true;
 		for (let y = -1; y > -9; y--) { 	// Checks all squares below the piece
 			let newx = fp;
 			let newy = sp+y;
 			
 			if ( newy >= 1 && newy <= 8 ) { 
-				if (document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true) { uip = false; }
+				if (document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() == true) { uip = false; }
 				if (uip) {
-					if  (
-							(document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == false) ||
-							( 
-								document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true &&
-								document.getElementById(`${TheStuff[newx]}${newy}`).firstChild.src.split('/')[5].split('.')[0][0] != pname[0]
-							) 
-						)  {
-						possible.push(`${TheStuff[newx]}${newy}`);
+					if ( isSpotFree(`${GPCM[newx]}${newy}`) )  {
+						possible.push(`${GPCM[newx]}${newy}`);
 					}
 				}
 			}
 		} // End of down check
 
 	} else if (PieceNames[pname] == 'Queen') {
+		
+	} else if (PieceNames[pname] == 'King') {
 		let xnums = [-1,0,1];
 		let ynums = [-1,0,1];
 
@@ -216,7 +222,7 @@ function handleDragStart(e) {
 
 		xnums.forEach(function (x) {
 			ynums.forEach(function (y) {
-				let newx = (TheStuff[fp] + x);
+				let newx = (GPCM[fp] + x);
 				let newy = parseInt(sp) + y;
 				if ( // If the new coords are within the grid
 						newx >= 0 &&
@@ -225,19 +231,17 @@ function handleDragStart(e) {
 						newy <= 8
 					) { 
 					if  ( // If the square is empty, or has an opponent piece
-							(document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == false) ||
+							(document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() == false) ||
 							( 
-								document.getElementById(`${TheStuff[newx]}${newy}`).hasChildNodes() == true &&
-								document.getElementById(`${TheStuff[newx]}${newy}`).firstChild.src.split('/')[5].split('.')[0][0] != pname[0]
+								document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() == true &&
+								document.getElementById(`${GPCM[newx]}${newy}`).firstChild.src.split('/')[5].split('.')[0][0] != pname[0]
 							) 
 					    )  {
-						possible.push(`${TheStuff[newx]}${newy}`);
+						possible.push(`${GPCM[newx]}${newy}`);
 					}
 				}
 			});
 		});
-	} else if (PieceNames[pname] == 'King') {
-		
 	}
 
 	possible.forEach(function (item) {
@@ -294,3 +298,24 @@ items.forEach(function(item) {
 // https://www.chessprogramming.org/Negamax
 // https://www.chessprogramming.org/Make_Move
 // https://www.chessprogramming.org/Unmake_Move
+
+
+
+
+
+// https://pawnbreak.com/how-to-capture-pieces/#:~:text=The%20rule%20is%20simple%3A%20if,the%20Knight%2C%20and%20the%20King.
+// https://www.jimmyvermeer.com/rules.html#:~:text=This%20rule%20is%20enforced%20even,piece%20you%20touched%2C%20if%20possible.
+// https://levelup.gitconnected.com/chess-python-ca4532c7f5a4#:~:text=If%20its%20free%20that%20space,then%20that%20piece%20becomes%20killable.
+// https://www.google.com/search?q=chess+when+is+a+piece+killable&rlz=1C1GCEA_enGB981GB981&oq=chess+when+is+a+piece+killable&aqs=chrome..69i57j33i160l2j33i22i29i30.5169j0j7&sourceid=chrome&ie=UTF-8
+
+
+
+// ====================================================================
+// Connect to websocket 
+// ====================================================================
+
+var socket = new WebSocket('ws://localhost:8765');
+socket.onopen = () => {
+	console.log('Connected to websocket server');
+	socket.send('Hello from client');
+};

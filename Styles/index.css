@@ -21,7 +21,7 @@ body {
 }
 
 .GridSquare {
-	background-color: white;
+	background-color: green;
 }
 
 .GridSquare:nth-child(-2n+7), 
@@ -32,7 +32,7 @@ body {
 .GridSquare:nth-child(41) ~ div:nth-child(-2n+48), 
 .GridSquare:nth-child(47) ~ div:nth-child(-2n+55), 
 .GridSquare:nth-child(57) ~ div:nth-child(-2n+64){
-  background-color: green;
+  background-color: white;
   color: #ffffff;
 }
 
