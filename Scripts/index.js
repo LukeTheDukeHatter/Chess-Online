@@ -130,8 +130,8 @@ function handleDragStart(e) {
 
 			opts.forEach((opt) => {
 
-				let newx = (GPCM[fp]+(i*Opt[0])); // The x value of the next point we're checking
-				let newy = (parseInt(sp)+(i*Opt[1])); // The y value of the next point we're checking
+				let newx = (GPCM[fp]+(i*opt[0])); // The x value of the next point we're checking
+				let newy = (parseInt(sp)+(i*opt[1])); // The y value of the next point we're checking
 				
 				if ( isLocalValid(newx,newy) ) { 	
 					if  ( isSpotFree(`${GPCM[newx]}${newy}`) )  {
@@ -140,8 +140,6 @@ function handleDragStart(e) {
 				}
 
 			});
-
-
 			
 		}
 
@@ -213,6 +211,26 @@ function handleDragStart(e) {
 
 	} else if (PieceNames[pname] == 'Queen') {
 		
+		let fp = GRef[0]; // The x grid reference of the original piece
+		let sp = GRef[1]; // The y grid reference of the original piece
+
+		for (let i = 1; i < 9; i++) {
+			let opts = [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+			opts.forEach((opt) => {
+
+				let newx = (GPCM[fp]+(i*opt[0])); // The x value of the next point we're checking
+				let newy = (parseInt(sp)+(i*opt[1])); // The y value of the next point we're checking
+				
+				if ( isLocalValid(newx,newy) ) { 	
+					if  ( isSpotFree(`${GPCM[newx]}${newy}`) )  {
+						possible.push(`${GPCM[newx]}${newy}`);
+					}
+				}
+
+			});
+
+		}
+
 	} else if (PieceNames[pname] == 'King') {
 		let xnums = [-1,0,1];
 		let ynums = [-1,0,1];
@@ -244,11 +262,7 @@ function handleDragStart(e) {
 		});
 	}
 
-	possible.forEach(function (item) {
-		document.getElementById(item).classList.add('valid');
-		console.log('item');
-	});
-
+	possible.forEach(function (item) { document.getElementById(item).classList.add('valid'); });
 }
 
 function handleDragEnd(e) {
@@ -298,7 +312,6 @@ items.forEach(function(item) {
 // https://www.chessprogramming.org/Negamax
 // https://www.chessprogramming.org/Make_Move
 // https://www.chessprogramming.org/Unmake_Move
-
 
 
 

@@ -1,0 +1,13 @@
+TODO: All on this list, NOTE, FIXME, TODO, BUG
+
+NOTE: Google How does castling work, as i now know how en passante works
+TODO: Work out how the server and the client interact, and what information is passed between them at what points (i.e What is the protocol)
+	TODO: Design the protocol
+	TODO: Design a reciever and processor for the protocol
+	TODO: Find a way to store the clients and organise them but keep them linked together
+	TODO: Create the lobby system
+
+FIXME: Need to make it so all moves are blocked by another piece, not just the rook, and excluding the knight
+
+TODO
+NOTE: Install this on laptop: https://thomasventurini.com/articles/the-best-way-to-work-with-todos-in-vscode/

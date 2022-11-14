@@ -11,7 +11,7 @@ body {
 }
 
 #MainGrid {
-	background-color: wheat;
+	background-color: #63ff63;
 	width: min(100vw,100vh);
 	height: min(100vw,100vh);
 
@@ -42,6 +42,15 @@ body {
 }
 
 .valid {
-	background-color: #63ff63;
-	opacity: 0.7;
+	opacity: 0.5;
+}
+
+.valid::before {
+	content: "";
+	background: rgb(255, 0, 0);
+	border: 0;
+	border-radius: 50%;
+	width: 10px;
+	height: 10px;
+	z-index: 3;
 }

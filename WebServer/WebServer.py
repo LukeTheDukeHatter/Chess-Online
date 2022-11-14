@@ -3,7 +3,6 @@ import websockets
 
 
 
-
 async def process(message):
 	print(message)
 
