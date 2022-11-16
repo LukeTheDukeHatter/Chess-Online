@@ -14,8 +14,6 @@ const CurrentTeam = 'W';
 // 	"WhiteRow2":["WPawn","WPawn",  "WPawn",  "WPawn", "WPawn","WPawn",  "WPawn",  "WPawn"]
 // }
 
-const Mapper = {'8':0,'7':1,'6':2,'5':3,'4':4,'3':5,'2':6,'1':7,'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7}
-
 const PieceNames = {"WKing":"King","WQueen":"Queen","WRook":"Rook","WBishop":"Bishop","WKnight":"Knight","WPawn":"Pawn","BKing":"King","BQueen":"Queen","BRook":"Rook","BBishop":"Bishop","BKnight":"Knight","BPawn":"Pawn"}
 		
 const StandardAbb = {
@@ -63,20 +61,19 @@ class Board {
 		this.possibleMoves = [];
 		this.check = false;
 		this.checkmate = false;
-		this.Mapper = {'8':0,'7':1,'6':2,'5':3,'4':4,'3':5,'2':6,'1':7,'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7}
+		this.Mapper = {'8':0,'7':1,'6':2,'5':3,'4':4,'3':5,'2':6,'1':7,'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7};
 	}
 
-	SetSquare(id,tm,te) { this.grid[Mapper[id[1]]][this.Mapper[id[0]]] = new Piece(tm,te,id) }
-	GetSquare(id) { return this.grid[Mapper[id[1]]][this.Mapper[id[0]]]; }
+
+	SetSquare(id,tm,te) { this.grid[this.Mapper[id[1]]][this.Mapper[id[0]]] = new Piece(tm,te,id) }
+	GetSquare(id) { return this.grid[this.Mapper[id[1]]][this.Mapper[id[0]]]; }
 	MakeMove(id1,id2 ) { 
-		this.grid[Mapper[id2[1]]][this.Mapper[id2[0]]] = this.grid[Mapper[id1[1]]][this.Mapper[id1[0]]];
-		this.grid[Mapper[id1[1]]][this.Mapper[id1[0]]] = null;
+		this.grid[this.Mapper[id2[1]]][this.Mapper[id2[0]]] = this.grid[this.Mapper[id1[1]]][this.Mapper[id1[0]]];
+		this.grid[this.Mapper[id1[1]]][this.Mapper[id1[0]]] = null;
 	}
 }
 
 var GameBoard = new Board();
-
-
 
 const ChessGrid = document.getElementById('MainGrid');
 
@@ -97,6 +94,7 @@ for (let x = 0; x < 64; x++) { 																	// Creates all 64 grid squares
 	}
 	ChessGrid.appendChild(y); 																	// Adds the GridSquare to the overall Board 
 }
+
 
 function RefreshDragging() {																	
 	document.querySelectorAll('.GridSquare').forEach( item => {
@@ -120,6 +118,16 @@ RefreshDragging();
 // ====================================================================
 
 let items = document.querySelectorAll('.GridSquare');
+
+function ResetBoard() {
+
+	
+
+
+
+	items = document.querySelectorAll('.GridSquare');
+}
+
 
 items.forEach( item => {
 	item.addEventListener('drop', handleDrop);
@@ -156,7 +164,6 @@ function handleDragEnd(e) {
 	});
 }
 function handleDragOver(e) {
-
 	e.preventDefault();
 	return false;
 }
@@ -175,9 +182,7 @@ function handleDrop(e) {
 		this.firstChild.style.opacity = '1'
 	}
 	
-	items.forEach(function (item) {
-		item.classList.remove('valid');
-	});
+	items.forEach( (item) => { item.classList.remove('valid'); });
 
 	RefreshDragging();
 
