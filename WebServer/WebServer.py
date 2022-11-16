@@ -1,18 +1,25 @@
-import asyncio
-import websockets
+from SupportClasses import *
+
+app = SocketHandler('localhost', 8765)
+
+@app.route('login')
+async def login(content, websocket):
+	u,p = content.split('|~|')
+	print(u,p)
 
 
+@app.route('createroom')
+async def createroom(content, websocket):
+	...
 
-async def process(message):
-	print(message)
 
-async def reciever(websocket):
-	async for message in websocket:
-		await process(message)
-		
-async def main():
-	async with websockets.serve(reciever, 'localhost', 8765):
-		await asyncio.Future()  # run forever
+@app.route('joinroom')
+async def joinroom(content, websocket):
+	...
 
-asyncio.run(main())
 
+@app.route('leaveroom')
+async def leaveroom(content, websocket):
+	...
+
+app.run()
