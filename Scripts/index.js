@@ -5,14 +5,12 @@ const Locals = {"a8":"BRook","b8":"BKnight","c8":"BBishop","d8":"BQueen","e8":"B
 		  		"a1":"WRook","b1":"WKnight","c1":"WBishop","d1":"WQueen","e1":"WKing","f1":"WBishop","g1":"WKnight","h1":"WRook",
 				"a2":"WPawn","b2":"WPawn","c2":"WPawn","d2":"WPawn","e2":"WPawn","f2":"WPawn","g2":"WPawn","h2":"WPawn"};
 
-const CurrentTeam = 'W';
 
-// const DefaultLocationRows = {
-// 	"BlackRow1":["BRook","BKnight","BBishop","BQueen","BKing","BBishop","BKnight","BRook"],
-// 	"BlackRow2":["BPawn","BPawn",  "BPawn",  "BPawn", "BPawn","BPawn",  "BPawn",  "BPawn"],
-// 	"WhiteRow1":["WRook","WKnight","WBishop","WQueen","WKing","WBishop","WKnight","WRook"],
-// 	"WhiteRow2":["WPawn","WPawn",  "WPawn",  "WPawn", "WPawn","WPawn",  "WPawn",  "WPawn"]
-// }
+// var CurrentTeam = 'W';
+
+const CurrentTeam = location.search.split('myParam=')[1] ? location.search.split('myParam=')[1] : 'W';
+
+function SwitchTeam() { window.location.search = '?myParam=' + (CurrentTeam == 'W' ? 'B' : 'W'); }
 
 const PieceNames = {"WKing":"King","WQueen":"Queen","WRook":"Rook","WBishop":"Bishop","WKnight":"Knight","WPawn":"Pawn","BKing":"King","BQueen":"Queen","BRook":"Rook","BBishop":"Bishop","BKnight":"Knight","BPawn":"Pawn"}
 		
