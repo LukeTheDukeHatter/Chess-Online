@@ -5,10 +5,12 @@ from os.path import exists
 class Login():
 	def __init__(self,email:str="",username:str="",password:str="",JSONData:dict=None):
 		if JSONData == None:
+			self.uuid = sha256((email).encode('utf-8')).hexdigest()
 			self.Email = email
 			self.Username = username
 			self.Password = sha256(password.encode('utf-8')).hexdigest()
 		else:
+			self.uuid = JSONData['uuid']
 			self.Email = JSONData['Email']
 			self.Username = JSONData['Username']
 			self.Password = JSONData['Password']
@@ -20,7 +22,7 @@ class Login():
 			return False
 
 	def Serialize(self) -> dict:
-		return {'Email':self.Email,'Username':self.Username,'Password':self.Password}
+		return {'Email':self.Email,'Username':self.Username,'Password':self.Password,'uuid':self.uuid}
 
 class DataBase():
 	def __init__(self,filename:str):
@@ -43,11 +45,12 @@ class DataBase():
 		self.Logins[email] = (Login(email=email,username=username,password=password))
 		self.UpdateFile()
 
-	def RemoveLogin(self,email:str) -> bool:
+	def RemoveLogin(self,email:str,password:str) -> bool:
 		if email in self.Logins:
-			del self.Logins[email]
-			self.UpdateFile()
-			return True
+			if self.CheckLogin(email,password):
+				del self.Logins[email]
+				self.UpdateFile()
+				return True
 
 	def CheckLogin(self,email:str,password:str) -> bool:
 		if email in self.Logins:

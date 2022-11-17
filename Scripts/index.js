@@ -6,11 +6,7 @@ const Locals = {"a8":"BRook","b8":"BKnight","c8":"BBishop","d8":"BQueen","e8":"B
 				"a2":"WPawn","b2":"WPawn","c2":"WPawn","d2":"WPawn","e2":"WPawn","f2":"WPawn","g2":"WPawn","h2":"WPawn"};
 
 
-// var CurrentTeam = 'W';
-
-const CurrentTeam = location.search.split('myParam=')[1] ? location.search.split('myParam=')[1] : 'W';
-
-function SwitchTeam() { window.location.search = '?myParam=' + (CurrentTeam == 'W' ? 'B' : 'W'); }
+var CurrentTeam = 'W';
 
 const PieceNames = {"WKing":"King","WQueen":"Queen","WRook":"Rook","WBishop":"Bishop","WKnight":"Knight","WPawn":"Pawn","BKing":"King","BQueen":"Queen","BRook":"Rook","BBishop":"Bishop","BKnight":"Knight","BPawn":"Pawn"}
 		
@@ -29,47 +25,7 @@ const StandardAbb = {
 	"Knight":"N"
 }
 
-class Piece {
-	constructor(team,type,id) {
-		this.team = team;
-		this.type = type;
-		this.image = team + StandardAbb[type];
-		this.dead = false;
-		this.hasMoved = false;
-		this.id = id;
-	}
-}
 
-class Board {
-	constructor() {
-		this.grid = [
-			[null,null,null,null,null,null,null,null],
-			[null,null,null,null,null,null,null,null],
-			[null,null,null,null,null,null,null,null],
-			[null,null,null,null,null,null,null,null],
-			[null,null,null,null,null,null,null,null],
-			[null,null,null,null,null,null,null,null],
-			[null,null,null,null,null,null,null,null],
-			[null,null,null,null,null,null,null,null]
-		]
-		this.pieces = {};
-		this.selected = null;
-		this.turn = "White";
-		this.moves = [];
-		this.possibleMoves = [];
-		this.check = false;
-		this.checkmate = false;
-		this.Mapper = {'8':0,'7':1,'6':2,'5':3,'4':4,'3':5,'2':6,'1':7,'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7};
-	}
-
-
-	SetSquare(id,tm,te) { this.grid[this.Mapper[id[1]]][this.Mapper[id[0]]] = new Piece(tm,te,id) }
-	GetSquare(id) { return this.grid[this.Mapper[id[1]]][this.Mapper[id[0]]]; }
-	MakeMove(id1,id2 ) { 
-		this.grid[this.Mapper[id2[1]]][this.Mapper[id2[0]]] = this.grid[this.Mapper[id1[1]]][this.Mapper[id1[0]]];
-		this.grid[this.Mapper[id1[1]]][this.Mapper[id1[0]]] = null;
-	}
-}
 
 var GameBoard = new Board();
 
@@ -119,7 +75,7 @@ let items = document.querySelectorAll('.GridSquare');
 
 function ResetBoard() {
 
-	
+
 
 
 

@@ -1,20 +1,13 @@
-const GPCM = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7,
-			   0:'a',1:'b',2:'c',3:'d',4:'e',5:'f',6:'g',7:'h'};
+const GPCM = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7,0:'a',1:'b',2:'c',3:'d',4:'e',5:'f',6:'g',7:'h'};
 
 function isLocalValid(x,y) { return (x >= 0) && (x <= 7) && (y >= 1) && (y <= 8) };
-function isSpotFree(id,pname) {
-	return (
-		document.getElementById(id).hasChildNodes() == false || isOpposingPiece(id,pname)
-	)
-}
+function isSpotFree(id,pname) { return document.getElementById(id).hasChildNodes() == false || isOpposingPiece(id,pname) }
 function isOpposingPiece(id,pname) { 
 	return (
 		document.getElementById(id).hasChildNodes() == true &&
 		document.getElementById(id).firstChild.src.split('/').slice(-1)[0].split('.')[0][0] != pname[0]
 	)
 }
-
-
 
 function CalculateValidPoints(GRef, pname) {
 

@@ -1,0 +1,14 @@
+{
+    "luke@somedev.com": {
+        "Email": "luke@somedev.com",
+        "Username": "luke",
+        "Password": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+        "uuid": "ce5c55c6a503af34b87626261c3f7c06e131c2107946233829962069129ee810"
+    },
+    "user@tessto.com": {
+        "Email": "user@tessto.com",
+        "Username": "myusername",
+        "Password": "897b7021c77dc96bd87931d0ab7596933e71a27bd01e06273f8492d9f6e648c4",
+        "uuid": "8357a88b6c2a0127bad2609b274ac97af48803d3891ebb6ef535d2effa0d19a0"
+    }
+}
