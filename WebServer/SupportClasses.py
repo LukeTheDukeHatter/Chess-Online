@@ -1,7 +1,6 @@
 import websockets
 import asyncio
 
-
 class SocketHandler:
 	def __init__(self, address:str='localhost', port:int=8765):
 		self.address = address

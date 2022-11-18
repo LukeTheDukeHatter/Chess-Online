@@ -28,17 +28,17 @@ class DataBase():
 	def __init__(self,filename:str):
 		self.Logins = {}
 		self.Filename = filename
-		if exists(f"./Databases/{self.Filename}.json"):
+		if exists(f"../Databases/{self.Filename}.json"):
 			self.LoadFile()
 		else:
 			self.UpdateFile()
 
 	def UpdateFile(self) -> dict:
-		with open(f"./Databases/{self.Filename}.json",'w') as f:
+		with open(f"../Databases/{self.Filename}.json",'w') as f:
 			f.write(dumps({k:v.Serialize() for k,v in self.Logins.items()}))
 
 	def LoadFile(self) -> dict:
-		with open(f"./Databases/{self.Filename}.json",'r') as f:
+		with open(f"../Databases/{self.Filename}.json",'r') as f:
 			self.Logins = {k:Login(JSONData=v) for k,v in loads(f.read()).items()}
 
 	def AddLogin(self,email:str,username:str,password:str) -> bool:
@@ -54,7 +54,7 @@ class DataBase():
 
 	def CheckLogin(self,email:str,password:str) -> bool:
 		if email in self.Logins:
-			return self.Logins[email].CheckLogin(email,password)
+			return self.Logins[email].CheckLogin(password)
 		else:
 			return False
 

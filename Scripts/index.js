@@ -74,11 +74,6 @@ RefreshDragging();
 let items = document.querySelectorAll('.GridSquare');
 
 function ResetBoard() {
-
-
-
-
-
 	items = document.querySelectorAll('.GridSquare');
 }
 

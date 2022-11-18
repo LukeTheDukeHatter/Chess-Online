@@ -2,5 +2,5 @@ import sys;sys.path.append('./WebServer/')
 
 import JQLServer
 
-Maindb = JQLServer.DataBase('firstdb')
-Maindb.AddLogin('user@tessto.com','myusername','stinky123')
+Maindb = JQLServer.DataBase('maindb')
+Maindb.AddLogin('luke@somedev.com','myusername','stinky123')
