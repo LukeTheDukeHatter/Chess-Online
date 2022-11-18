@@ -124,11 +124,10 @@ function handleDrop(e) {
 	e.stopPropagation();
   
 	if (dragSrcEl !== this && this.classList.contains('valid')) {
-		// dragSrcEl.innerHTML = this.innerHTML;
 		GameBoard.MakeMove(dragSrcEl.id, this.id);
 		dragSrcEl.innerHTML = null;
 	    this.innerHTML = e.dataTransfer.getData('text/html');
-		this.firstChild.style.opacity = '1'
+		this.firstChild.style.opacity = '1';
 	}
 	
 	items.forEach( (item) => { item.classList.remove('valid'); });

@@ -5,7 +5,13 @@
 		<title>Chess - Lobby</title>
 	</head>
 	<body>
-		
+		<div class="Holder">
+			<h1>Welcome, {{Username}}</h1>
+			<button>Create a new Room!</button>
+			<form action="lobby.html" method="post">
+				<input type="text" name="room" placeholder="Room ID" pattern="[A-Za-z0-9]{6}"/>
+				<input type="submit" value="Join Room"/>
+		</div>
 		<script src="../Scripts/lobby.js"></script>
 	</body>
 </html>

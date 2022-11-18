@@ -1,5 +1,11 @@
 from SupportClasses import *
 from JQLServer import DataBase
+from json import stringify
+import threading
+
+
+
+
 
 app = SocketHandler('localhost', 8765)
 
@@ -30,5 +36,9 @@ async def joinroom(content, websocket):
 @app.route('leaveroom')
 async def leaveroom(content, websocket):
 	...
+
+@app.route('info')
+async def getuserinfo(content, websocket):
+	await websocket.send(stringify(MainDB.GetLogin(content).SafeSerialize()))
 
 app.run()

@@ -1,0 +1,21 @@
+* {
+    padding: 0;
+    margin: 0;
+    margin-bottom: 0.5em;
+}
+
+body {
+    min-width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.Holder {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: start;
+}

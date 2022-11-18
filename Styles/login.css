@@ -1,0 +1,35 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+#theForm {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #ccc;
+    margin: 0 auto;
+    padding: 1.5em;
+
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+}
+
+input[type=email], input[type=password], input[type=text] {
+    padding: 0.5em 0.25em;
+    border-radius: 5px;
+    border: 1px solid grey;
+}
+
+input {margin-bottom: 0.75em;}
+
+input[type=submit] {
+    padding: 0.25em, 0.5em;
+}

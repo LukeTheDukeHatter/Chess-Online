@@ -24,6 +24,9 @@ class Login():
 	def Serialize(self) -> dict:
 		return {'Email':self.Email,'Username':self.Username,'Password':self.Password,'uuid':self.uuid}
 
+	def SafeSerialize(self) -> dict:
+		return {k:v for k,v in self.Serialize() if k not in ['Password','uuid']}
+
 class DataBase():
 	def __init__(self,filename:str):
 		self.Logins = {}
