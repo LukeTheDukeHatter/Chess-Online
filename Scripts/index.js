@@ -6,7 +6,7 @@ const Locals = {"a8":"BRook","b8":"BKnight","c8":"BBishop","d8":"BQueen","e8":"B
 				"a2":"WPawn","b2":"WPawn","c2":"WPawn","d2":"WPawn","e2":"WPawn","f2":"WPawn","g2":"WPawn","h2":"WPawn"};
 
 
-var CurrentTeam = 'W';
+var CurrentTeam = 'B';
 
 const PieceNames = {"WKing":"King","WQueen":"Queen","WRook":"Rook","WBishop":"Bishop","WKnight":"Knight","WPawn":"Pawn","BKing":"King","BQueen":"Queen","BRook":"Rook","BBishop":"Bishop","BKnight":"Knight","BPawn":"Pawn"}
 		
@@ -26,7 +26,6 @@ const StandardAbb = {
 }
 
 
-
 var GameBoard = new Board();
 
 const ChessGrid = document.getElementById('MainGrid');
@@ -35,7 +34,7 @@ const Letters = {0:'a',1:'b',2:'c',3:'d',4:'e',5:'f',6:'g',7:'h'}; 								// Ma
 
 for (let x = 0; x < 64; x++) { 																	// Creates all 64 grid squares
 	let y = document.createElement('div'); 														// Creates a div element
-	let tid = CurrentTeam == "W" ? `${Letters[x%8]}${8-Math.floor(x/8)}` : `${Letters[x%8]}${Math.floor(x/8)+1}`; // Creates the square id
+	let tid = CurrentTeam == "W" ? `${Letters[x%8]}${8-Math.floor(x/8)}` : `${Letters[8-(x%8)-1]}${Math.floor(x/8)+1}`; // Creates the square id
 	y.className = tid in Locals ? 'GridSquare ' + Locals[tid][0] + 'team' : 'GridSquare'; 		// Gives it the GridSquare classname
 	y.id = tid; 																				// Assigns the id to the div
 	y.draggable = true; 																		// Enables the HTML5 Drag and Drop API for all squares
