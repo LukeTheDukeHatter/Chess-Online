@@ -2,5 +2,10 @@ import sys;sys.path.append('./WebServer/')
 
 import JQLServer
 
-Maindb = JQLServer.DataBase('maindb')
-Maindb.AddLogin('luke@somedev.com','myusername','stinky123')
+dbname = input('Enter database name: ')
+email = input('Enter email: ')
+username = input('Enter username: ')
+password = input('Enter password: ')
+
+db = JQLServer.DataBase(dbname)
+db.AddLogin(email, username, password)

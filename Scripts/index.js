@@ -11,18 +11,12 @@ var CurrentTeam = 'B';
 const PieceNames = {"WKing":"King","WQueen":"Queen","WRook":"Rook","WBishop":"Bishop","WKnight":"Knight","WPawn":"Pawn","BKing":"King","BQueen":"Queen","BRook":"Rook","BBishop":"Bishop","BKnight":"Knight","BPawn":"Pawn"}
 		
 const StandardAbb = {
-	"Q":"Queen",
-	"K":"King",
-	"P":"Pawn",
-	"B":"Bishop",
-	"R":"Rook",
-	"N":"Knight",
-	"Queen":"Q",
-	"King":"K",
-	"Pawn":"P",
-	"Bishop":"B",
-	"Rook":"R",
-	"Knight":"N"
+	"Q":"Queen","Queen":"Q",
+	"K":"King","King":"K",
+	"P":"Pawn","Pawn":"P",
+	"B":"Bishop","Bishop":"B",
+	"R":"Rook","Rook":"R",
+	"N":"Knight","Knight":"N"
 }
 
 

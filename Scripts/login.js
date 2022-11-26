@@ -4,7 +4,7 @@ const socket = new WebSocket('ws://localhost:8765');
 
 socket.onopen = () => { console.log('Connected to webserver'); };
 
-function send(type,message) { this.socket.send(type+'|~~|'+message); }
+function send(type,message) { socket.send(type+'|~~|'+message); }
 
 socket.onmessage = (e) => {
 	alert('Recieved');

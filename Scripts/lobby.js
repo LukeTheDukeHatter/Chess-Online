@@ -1,8 +1,14 @@
 if (document.cookie) {
-	let cook = document.cookie.split(';')[0].split('=');
-	console.log(cook);
+	let daCookie = getCookie('uid')
+	if (daCookie) {
+		console.log('Found cookie');
+		console.log(daCookie);
+		console.log('there ya goooo')
+	} else {
+		console.log('No Cookie');
+	}
 } else {
-	console.log('Bugga');
+	console.log('No Cookie');
 }
 
 // Gets the cookies with the uid
@@ -11,7 +17,7 @@ const socket = new WebSocket('ws://localhost:8765');
 
 socket.onopen = () => { console.log('Connected to webserver'); };
 
-function send(type,message) { this.socket.send(type+'|~~|'+message); }
+function send(type,message) { socket.send(type+'|~~|'+message); }
 
 socket.onmessage = (e) => {
 	alert('Recieved');
