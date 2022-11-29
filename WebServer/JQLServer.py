@@ -25,7 +25,7 @@ class Login():
 		return {'Email':self.Email,'Username':self.Username,'Password':self.Password,'uuid':self.uuid}
 
 	def SafeSerialize(self) -> dict:
-		return {k:v for k,v in self.Serialize() if k not in ['Password','uuid']}
+		return {k:v for k,v in self.Serialize().items() if k not in ['Password','uuid']}
 
 class DataBase():
 	def __init__(self,filename:str):
@@ -61,8 +61,12 @@ class DataBase():
 		else:
 			return False
 
-	def GetLogin(self,email:str) -> Login:
-		if email in self.Logins:
-			return self.Logins[email]
+	def GetLogin(self,type:str,value:str) -> Login:
+		if type == 'email':
+			return self.Logins[value]
+		elif type == 'uuid':
+			for k,v in self.Logins.items():
+				if v.uuid == value:
+					return v
 		else:
 			return False

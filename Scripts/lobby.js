@@ -1,52 +1,28 @@
 if (document.cookie) {
-	let daCookie = getCookie('uid')
+	var daCookie = getCookie('uid')
 	if (daCookie) {
 		console.log('Found cookie');
 		console.log(daCookie);
 		console.log('there ya goooo')
 	} else {
 		console.log('No Cookie');
+		window.location.href = 'login.html';
 	}
 } else {
-	console.log('No Cookie');
+	window.location.href = 'login.html';
 }
-
-// Gets the cookies with the uid
 
 const socket = new WebSocket('ws://localhost:8765');
 
-socket.onopen = () => { console.log('Connected to webserver'); };
+socket.onopen = () => { 
+	console.log('Connected to webserver');
+	send('info',`uuid|~|${getCookie('uid')}`);
+};
 
 function send(type,message) { socket.send(type+'|~~|'+message); }
 
-socket.onmessage = (e) => {
-	alert('Recieved');
-
-	let data = e.data.split('|~~|');
-	if (data[0] == 'true') {
-
-		const date = new Date();
-		date.setFullYear(date.getFullYear() + 1);
-		  
-		// April 20, 2023
-		console.log(date); // 2023-04-20T00:00:00.000Z
-
-		document.cookie = "uid="+data[1]+"; expires = "+date+"; path=/";
-		console.log(document.cookie.split('=')[0]);
-		console.log(document.cookie.split('=')[1]);
-		console.log(document.cookie.split('='));
-		console.log(document.cookie);
-		window.location.href = 'lobby.html';
-	} else {
-		alert('Invalid username or password');
-	}
-}
-
-
-
-
 let roomTemplate = `
-<h1>Welcome to the lobby,</h1>
+<h1>Welcome to the lobby, {{Username}}</h1>
 <h2>Your room code is: <b style="text-transform: uppercase;">{{RoomCode}}</b></h2>
 <br>
 <h2>Currently Connected:</h3>
@@ -58,4 +34,50 @@ let roomTemplate = `
 
 let initTemplate = `
 <h1>Welcome, {{Username}}</h1>
+<button id='newrb'>Create a new Room!</button>
+<form action="lobby.html" method="post" id='joinroomform'>
+	<input type="text" name="room" placeholder="Room ID" pattern="[A-Za-z0-9]{6}"/>
+	<input type="submit" value="Join Room"/>
+</form>
 `;
+
+socket.onmessage = (e) => {
+
+	var MidBox = document.getElementById('Holder');
+
+	type,data = e.data.split('|~~|');
+
+	if (type == 'info') {
+
+		let dadata = JSON.parse(data);
+	
+		hasRoomId = getCookie('roomid');
+	
+		if (hasRoomId) {
+			// Render the room template
+			MidBox.innerHTML = roomTemplate.replace('{{User1}}', dadata['Username']).replace('{{Username}}', dadata['Username']).replace('{{RoomCode}}', hasRoomId);
+		} else {
+			// Render the init template
+			MidBox.innerHTML = initTemplate.replace('{{Username}}', dadata['Username']);
+
+			document.getElementById('joinroomform').addEventListener('submit', (e) => {
+				e.preventDefault();
+				let roomform = document.getElementById('joinroomform');
+				let roomid = roomform.elements['room'].value;
+				setCookie('roomid', roomid.toUpperCase());
+				window.location.href = 'lobby.html';
+			});
+
+			document.getElementById('newrb').addEventListener('click', (e) => {
+				socket.send('createroom|~~|'+getCookie('uid'));
+				
+			});
+
+		}
+
+	} else if (type == 'createdroom') {
+		setCookie('roomid', data);
+		window.location.href = 'lobby.html';
+	}
+}
+

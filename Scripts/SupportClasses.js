@@ -34,8 +34,13 @@ class Board {
 
 	SetSquare(id,tm,te) { this.grid[this.Mapper[id[1]]][this.Mapper[id[0]]] = new Piece(tm,te,id) }
 	GetSquare(id) { return this.grid[this.Mapper[id[1]]][this.Mapper[id[0]]]; }
-	MakeMove(id1,id2 ) { 
+	MakeMove(id1,id2) { 
 		this.grid[this.Mapper[id2[1]]][this.Mapper[id2[0]]] = this.grid[this.Mapper[id1[1]]][this.Mapper[id1[0]]];
 		this.grid[this.Mapper[id1[1]]][this.Mapper[id1[0]]] = null;
+		let x = document.getElementById(id1);
+		let y = document.getElementById(id2);
+		y.innerHTML = x.innerHTML;
+		x.innerHTML = "";
+		y.firstChild.style.opacity = '1';
 	}
 }

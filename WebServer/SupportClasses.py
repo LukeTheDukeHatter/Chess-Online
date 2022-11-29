@@ -25,5 +25,13 @@ class SocketHandler:
 
 	def run(self):
 		asyncio.run(self.main())
-	
 
+class Room():
+	def __init__(self,code,uid,usock):
+		self.code = code
+		self.users = {uid:usock}
+
+	def SendMove(self,uid,id1,id2):
+		for u in self.users:
+			if u != uid:
+				self.users[u].send('move|~~|'+id1+'|~|'+id2)
