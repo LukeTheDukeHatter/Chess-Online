@@ -55,3 +55,29 @@ async def sendmove(content, websocket):
 			r.SendMove(sender,id1,id2)
 
 app.run()
+
+
+import http.server
+import socketserver
+import threading
+
+
+PORT = 80
+
+class Server(http.server.SimpleHTTPRequestHandler):
+	def do_GET(self):
+		if self.path == "/":
+			self.path = "/index.html"
+		return http.server.SimpleHTTPRequestHandler.do_GET(self)
+
+Handler = Server
+def main():
+	with socketserver.TCPServer(("", PORT), Handler) as httpd:
+		print("Serving at port", PORT)
+		httpd.serve_forever()
+	
+
+if __name__ == "__main__": 
+	x = threading.Thread(target=main)
+	x.start()
+	app.run()
