@@ -1,5 +1,3 @@
-import sys;sys.path.append('./WebServer/')
-
 import JQLServer
 
 dbname = input('Enter database name: ')

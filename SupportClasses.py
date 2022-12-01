@@ -24,6 +24,7 @@ class SocketHandler:
 			await asyncio.Future()
 
 	def run(self):
+		print('Socket Server started on port: '+str(self.port))
 		asyncio.run(self.main())
 
 class Room():

@@ -1,7 +1,12 @@
 from SupportClasses import *
 from JQLServer import DataBase
+
+import threading
+from flask import Flask, redirect, url_for, send_file
 from json import dumps
 from random import choice
+
+fapp = Flask(__name__)
 
 
 app = SocketHandler('localhost', 8765)
@@ -54,30 +59,39 @@ async def sendmove(content, websocket):
 		if sender in r.users:
 			r.SendMove(sender,id1,id2)
 
-app.run()
 
+@fapp.route('/')
+def hello_world():
+	return redirect(url_for('./Pages/index.html'))
 
-import http.server
-import socketserver
-import threading
+@fapp.route('/robots.txt')
+def robots(): return 'no'
 
+@fapp.route('/favicon.ico')
+def favicon(): return 'img'
 
-PORT = 80
-
-class Server(http.server.SimpleHTTPRequestHandler):
-	def do_GET(self):
-		if self.path == "/":
-			self.path = "/index.html"
-		return http.server.SimpleHTTPRequestHandler.do_GET(self)
-
-Handler = Server
-def main():
-	with socketserver.TCPServer(("", PORT), Handler) as httpd:
-		print("Serving at port", PORT)
-		httpd.serve_forever()
+@fapp.route('/', defaults={'path': ''})
+@fapp.route('/<path:path>')
+def catch_all(path):
+	return send_file('./'+path)
 	
+
+def main():
+	fapp.run()
 
 if __name__ == "__main__": 
 	x = threading.Thread(target=main)
 	x.start()
 	app.run()
+
+
+
+
+
+
+
+# @app.route('/post-reciever-w', methods=['GET', 'POST'])
+# def recieve_withdrawal():
+#     if request.method == 'POST':
+#         User = request.form.get('Username')
+#         Diamonds = request.form.get('Diamonds')

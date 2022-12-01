@@ -1,5 +1,21 @@
 // Select Piece Starting Positions
 
+if (document.cookie) {
+	if (getCookie('uid') && getCookie('roomid')) {
+		console.log('Valid cookies found');
+	} else {
+		if (getCookie('uid')) {
+			window.location.href = 'lobby.html';
+		} else if (getCookie('roomid')) {
+			setCookie('roomid' , '');
+		}
+		window.location.href = 'login.html';
+	}
+} else {
+	window.location.href = 'login.html';
+}
+
+
 const Locals = {"a8":"BRook","b8":"BKnight","c8":"BBishop","d8":"BQueen","e8":"BKing","f8":"BBishop","g8":"BKnight","h8":"BRook",
 				"a7":"BPawn","b7":"BPawn","c7":"BPawn","d7":"BPawn","e7":"BPawn","f7":"BPawn","g7":"BPawn","h7":"BPawn",
 		  		"a1":"WRook","b1":"WKnight","c1":"WBishop","d1":"WQueen","e1":"WKing","f1":"WBishop","g1":"WKnight","h1":"WRook",
@@ -35,12 +51,13 @@ for (let x = 0; x < 64; x++) { 																	// Creates all 64 grid squares
 	if (tid in Locals) { 																		// Checks if the square requires a piece to be initially placed on it
 		let z = document.createElement('img'); 													// Creates an image element 
 		z.src = `../Images/Pieces/${Locals[tid]}.png`; 											// Sets the image source to the corresponding piece image
-		z.className = 'PieceIcon'; 											// Sets the image classname to PieceIcon and the piece type
+		z.className = 'PieceIcon'; 																// Sets the image classname to PieceIcon and the piece type
 		y.appendChild(z); 																		// Adds the image to the div
 		GameBoard.SetSquare(tid,Locals[tid][0],StandardAbb[PieceNames[Locals[tid]]]); 			// Adds the piece to the Positions array
 	}
 	ChessGrid.appendChild(y); 																	// Adds the GridSquare to the overall Board 
 }
+
 
 
 function RefreshDragging() {																	
