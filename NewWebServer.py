@@ -2,7 +2,7 @@ from SupportClasses import *
 from JQLServer import DataBase
 
 import threading
-from flask import Flask, redirect, url_for, send_file
+from flask import Flask, redirect, url_for, send_file, send_from_directory, abort
 from json import dumps
 from random import choice
 
@@ -26,10 +26,9 @@ async def login(content, websocket):
 	u,p = content.split('|~|')
 
 	if MainDB.CheckLogin(u,p):
-		await sendmsg('true',MainDB.GetLogin(u).uuid,websocket)
+		await sendmsg('true',MainDB.GetLogin('uuid',u)['uuid'],websocket)
 	else:
 		await sendmsg('false','',websocket)
-
 
 @app.route('createroom')
 async def createroom(content, websocket):
@@ -59,22 +58,20 @@ async def sendmove(content, websocket):
 		if sender in r.users:
 			r.SendMove(sender,id1,id2)
 
+fapp = Flask(__name__)
 
-@fapp.route('/')
-def hello_world():
-	return redirect(url_for('./Pages/index.html'))
+@fapp.route('/<path:filename>')
+def serve_file(filename):
+	if not ('Databases' in filename):
+		return send_from_directory('.', filename)
+	else:
+		abort(403, description="Access denied")
 
 @fapp.route('/robots.txt')
 def robots(): return 'no'
 
 @fapp.route('/favicon.ico')
 def favicon(): return 'img'
-
-@fapp.route('/', defaults={'path': ''})
-@fapp.route('/<path:path>')
-def catch_all(path):
-	return send_file('./'+path)
-	
 
 def main():
 	fapp.run()
@@ -84,14 +81,3 @@ if __name__ == "__main__":
 	x.start()
 	app.run()
 
-
-
-
-
-
-
-# @app.route('/post-reciever-w', methods=['GET', 'POST'])
-# def recieve_withdrawal():
-#     if request.method == 'POST':
-#         User = request.form.get('Username')
-#         Diamonds = request.form.get('Diamonds')

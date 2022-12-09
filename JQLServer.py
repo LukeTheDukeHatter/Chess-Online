@@ -50,7 +50,7 @@ class DataBase():
 
 	def RemoveLogin(self,email:str,password:str) -> bool:
 		if email in self.Logins:
-			if self.CheckLogin(email,password):
+			if self.CheckLogin(email,password): 
 				del self.Logins[email]
 				self.UpdateFile()
 				return True
@@ -61,12 +61,12 @@ class DataBase():
 		else:
 			return False
 
-	def GetLogin(self,type:str,value:str) -> Login:
+	def GetLogin(self,type:str,value:str) -> Login:           
 		if type == 'email':
 			return self.Logins[value]
 		elif type == 'uuid':
 			for k,v in self.Logins.items():
 				if v.uuid == value:
-					return v
+					return v.Serialize()
 		else:
 			return False
