@@ -58,8 +58,6 @@ for (let x = 0; x < 64; x++) { 																	// Creates all 64 grid squares
 	ChessGrid.appendChild(y); 																	// Adds the GridSquare to the overall Board 
 }
 
-
-
 function RefreshDragging() {																	
 	document.querySelectorAll('.GridSquare').forEach( item => {
 		if ( item.hasChildNodes() ) {
@@ -157,9 +155,13 @@ function handleDrop(e) {
 
 const socket = new WebSocket('ws://localhost:8765');
 
-socket.onopen = () => { console.log('Connected to webserver'); };
-
 function send(type,message) { socket.send(type+'|~~|'+message); }
+
+
+socket.onopen = () => { 
+	send()
+};
+
 
 socket.onmessage = (e) => {
 	var type,data = e.data.split('|~~|');

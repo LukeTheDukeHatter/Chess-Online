@@ -6,7 +6,10 @@ from flask import Flask, redirect, url_for, send_file
 from json import dumps
 from random import choice
 
-fapp = Flask(__name__)
+
+# ====================================================================
+# ====================-- Socket Reciever Server --====================
+# ====================================================================
 
 
 app = SocketHandler('localhost', 8765)
@@ -60,6 +63,12 @@ async def sendmove(content, websocket):
 			r.SendMove(sender,id1,id2)
 
 
+# ====================================================================
+# ===================-- Flask Library Web Server --===================
+# ====================================================================
+
+fapp = Flask(__name__)
+
 @fapp.route('/')
 def hello_world():
 	return redirect(url_for('./Pages/index.html'))
@@ -76,22 +85,9 @@ def catch_all(path):
 	return send_file('./'+path)
 	
 
-def main():
-	fapp.run()
+def main(): fapp.run()
 
 if __name__ == "__main__": 
 	x = threading.Thread(target=main)
 	x.start()
 	app.run()
-
-
-
-
-
-
-
-# @app.route('/post-reciever-w', methods=['GET', 'POST'])
-# def recieve_withdrawal():
-#     if request.method == 'POST':
-#         User = request.form.get('Username')
-#         Diamonds = request.form.get('Diamonds')
