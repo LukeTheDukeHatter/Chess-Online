@@ -69,8 +69,6 @@ fapp = Flask(__name__)
 
 fapp = Flask(__name__)
 
-
-
 @fapp.route('/robots.txt')
 def robots(): return 'no'
 
@@ -84,7 +82,6 @@ def serve_file(filename):
 	else:
 		abort(403, description="Access denied")
 	
-
 def main():
 	fapp.run()
 
@@ -92,11 +89,6 @@ if __name__ == "__main__":
 	x = threading.Thread(target=main)
 	x.start()
 	app.run()
-
-
-
-
-
 
 
 # @app.route('/post-reciever-w', methods=['GET', 'POST'])
