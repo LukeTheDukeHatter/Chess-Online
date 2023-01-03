@@ -30,6 +30,61 @@ async def login(content, websocket):
 	else:
 		await sendmsg('false','',websocket)
 
+@app.route('signup')
+async def signup(content, websocket):
+    e,u,p = content.split('|~|')
+
+    faults = []
+
+    if MainDB.LoginExists(e):
+        faults.append('Email already in use. ')
+    if len(u) < 8 or len(u) > 16:
+        faults.append('Username is too ' + 'short' if len(u) < 8 else 'long')
+
+    # Password checking
+    pf = 0
+    if len(p) < 8:
+        faults.append('Password is too short')
+    if len(p) > 50:
+        faults.append('Password is too long')
+
+    psc = 0
+    pnc = 0
+    pcc = 0
+    for c in p:
+        if c in '!@#$%&*<>/?(){}[]-=_+~':
+            psc += 1
+        elif c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+            pcc += 1
+        elif c in '0123456789':
+            pnc += 1
+
+    tfs = []
+    if psc == 0:
+        tfs.append('Symbol')
+    if pnc == 0:
+        tfs.append('Number')
+    if pcc == 0:
+        tfs.append('Capital Letter')
+
+    if len(tfs) > 0:
+        faults.append('Password needs at least one ')
+
+        if len(tfs == 1):
+            faults[-1] += tfs[0] + '.'
+        elif len(tfs) == 2:
+            faults[-1] += tfs[0] + ', and ' + tfs[1] + '.'
+        elif len(tfs) == 3:
+            faults[-1] += tfs[0] + ', ' + tfs[1] + ', and ' + tfs[2] + '.'
+
+    if len(faults) > 0:
+        websocket.send('false|~~|' + ''.join(faults))
+    else:
+        MainDB.AddLogin(e,u,p)
+        websocket.send('true|~~|Completed')
+
+
+
 @app.route('createroom')
 async def createroom(content, websocket):
 	newcode = GenerateCode()
@@ -57,6 +112,7 @@ async def sendmove(content, websocket):
 	for k,r in Rooms.items():
 		if sender in r.users:
 			r.SendMove(sender,id1,id2)
+
 
 fapp = Flask(__name__)
 

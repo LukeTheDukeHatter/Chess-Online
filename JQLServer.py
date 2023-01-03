@@ -70,3 +70,9 @@ class DataBase():
 					return v.Serialize()
 		else:
 			return False
+
+	def LoginExists(self,email:str) -> bool:
+	    if email in self.Logins.keys():
+	        return True
+	    else:
+	        return False
