@@ -6,7 +6,10 @@ from flask import Flask, redirect, url_for, send_file, send_from_directory, abor
 from json import dumps
 from random import choice
 
-fapp = Flask(__name__)
+
+# ====================================================================
+# ====================-- Socket Reciever Server --====================
+# ====================================================================
 
 
 app = SocketHandler('localhost', 8765)
@@ -116,12 +119,11 @@ async def sendmove(content, websocket):
 
 fapp = Flask(__name__)
 
-@fapp.route('/<path:filename>')
-def serve_file(filename):
-	if not ('Databases' in filename):
-		return send_from_directory('.', filename)
-	else:
-		abort(403, description="Access denied")
+# ====================================================================
+# ===================-- Flask Library Web Server --===================
+# ====================================================================
+
+fapp = Flask(__name__)
 
 @fapp.route('/robots.txt')
 def robots(): return 'no'
@@ -129,6 +131,13 @@ def robots(): return 'no'
 @fapp.route('/favicon.ico')
 def favicon(): return 'img'
 
+@fapp.route('/<path:filename>')
+def serve_file(filename):
+	if not ('Databases' in filename):
+		return send_from_directory('.', filename)
+	else:
+		abort(403, description="Access denied")
+	
 def main():
 	fapp.run()
 
@@ -137,3 +146,9 @@ if __name__ == "__main__":
 	x.start()
 	app.run()
 
+
+# @app.route('/post-reciever-w', methods=['GET', 'POST'])
+# def recieve_withdrawal():
+#     if request.method == 'POST':
+#         User = request.form.get('Username')
+#         Diamonds = request.form.get('Diamonds')
