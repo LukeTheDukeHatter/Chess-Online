@@ -73,7 +73,7 @@ async def signup(content, websocket):
     if len(tfs) > 0:
         faults.append('Password needs at least one ')
 
-        if len(tfs == 1):
+        if len(tfs) == 1:
             faults[-1] += tfs[0] + '.'
         elif len(tfs) == 2:
             faults[-1] += tfs[0] + ', and ' + tfs[1] + '.'
