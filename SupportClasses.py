@@ -30,7 +30,9 @@ class SocketHandler:
 class Room():
 	def __init__(self,code,uid,usock):
 		self.code = code
+		self.leader = uid
 		self.users = {uid:usock}
+
 
 	def SendMove(self,uid,id1,id2):
 		for u in self.users:

@@ -1,5 +1,3 @@
-// Select Piece Starting Positions
-
 if (document.cookie) {
 	if (getCookie('uid') && getCookie('roomid')) {
 		console.log('Valid cookies found');
@@ -23,18 +21,8 @@ const Locals = {"a8":"BRook","b8":"BKnight","c8":"BBishop","d8":"BQueen","e8":"B
 
 
 var CurrentTeam = 'B';
-
 const PieceNames = {"WKing":"King","WQueen":"Queen","WRook":"Rook","WBishop":"Bishop","WKnight":"Knight","WPawn":"Pawn","BKing":"King","BQueen":"Queen","BRook":"Rook","BBishop":"Bishop","BKnight":"Knight","BPawn":"Pawn"}
-
-const StandardAbb = {
-	"Q":"Queen","Queen":"Q",
-	"K":"King","King":"K",
-	"P":"Pawn","Pawn":"P",
-	"B":"Bishop","Bishop":"B",
-	"R":"Rook","Rook":"R",
-	"N":"Knight","Knight":"N"
-}
-
+const StandardAbb = {"Q":"Queen","Queen":"Q", "K":"King","King":"K", "P":"Pawn","Pawn":"P", "B":"Bishop","Bishop":"B", "R":"Rook","Rook":"R", "N":"Knight","Knight":"N"}
 
 var GameBoard = new Board();
 
@@ -44,12 +32,12 @@ const Letters = {0:'a',1:'b',2:'c',3:'d',4:'e',5:'f',6:'g',7:'h'}; 								// Ma
 
 for (let x = 0; x < 64; x++) { 																	// Creates all 64 grid squares
 	let y = document.createElement('div'); 														// Creates a div element
-	let tid = CurrentTeam == "W" ? `${Letters[x%8]}${8-Math.floor(x/8)}` : `${Letters[8-(x%8)-1]}${Math.floor(x/8)+1}`; // Creates the square id
+	let tid = CurrentTeam === "W" ? `${Letters[x%8]}${8-Math.floor(x/8)}` : `${Letters[8-(x%8)-1]}${Math.floor(x/8)+1}`; // Creates the square id
 	y.className = tid in Locals ? 'GridSquare ' + Locals[tid][0] + 'team' : 'GridSquare'; 		// Gives it the GridSquare classname
 	y.id = tid; 																				// Assigns the id to the div
 	y.draggable = true; 																		// Enables the HTML5 Drag and Drop API for all squares
 	if (tid in Locals) { 																		// Checks if the square requires a piece to be initially placed on it
-		let z = document.createElement('img'); 													// Creates an image element 
+		let z = document.createElement('img'); 													// Creates an image element
 		z.src = `../Images/Pieces/${Locals[tid]}.png`; 											// Sets the image source to the corresponding piece image
 		z.className = 'PieceIcon'; 																// Sets the image classname to PieceIcon and the piece type
 		y.appendChild(z); 																		// Adds the image to the div
@@ -75,9 +63,11 @@ function RefreshDragging() {
 
 RefreshDragging();
 
-// ====================================================================
-// ==================-- Drag Handling Start --=========================
-// ====================================================================
+
+
+
+
+
 
 let items = document.querySelectorAll('.GridSquare');
 
@@ -97,7 +87,7 @@ var dragSrcEl;
 
 function handleDragStart(e) {
 
-	this.firstChild.style.opacity = '0.4'
+	this.firstChild.style.opacity = '0.4';
 
 	dragSrcEl = this;
   
@@ -144,14 +134,7 @@ function handleDrop(e) {
 	return false;
 }
 
-// ====================================================================
-// ===================-- Drag Handling Stop --=========================
-// ====================================================================
-
-
-// ====================================================================
 // =====================-- Connect to websocket --=====================
-// ====================================================================
 
 const socket = new WebSocket('ws://localhost:8765');
 
@@ -159,13 +142,13 @@ function send(type,message) { socket.send(type+'|~~|'+message); }
 
 
 socket.onopen = () => { 
-	send()
+	console.log('Connected to server');
 };
 
 
 socket.onmessage = (e) => {
 	var type,data = e.data.split('|~~|');
-	if (type == 'move') {
+	if (type === 'move') {
 		var id1,id2 = data.split('|~|');
 		GameBoard.MakeMove(id1,id2);
 	}

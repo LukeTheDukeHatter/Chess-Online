@@ -8,7 +8,7 @@ from random import choice
 
 
 # ====================================================================
-# ====================-- Socket Reciever Server --====================
+# ====================-- Socket Receiver Server --====================
 # ====================================================================
 
 
@@ -16,7 +16,7 @@ app = SocketHandler('localhost', 8765)
 MainDB = DataBase('maindb')
 Rooms = {}
 
-async def sendmsg(type,message,sock): await sock.send(type+'|~~|'+message)
+async def sendmsg(type: str, message: str, sock): await sock.send(type+'|~~|'+message)
 
 def GenerateCode():
 	chars = 'abcdefghijklmnopqrstuvwxyz1234567890'
@@ -29,7 +29,7 @@ async def login(content, websocket):
 	u,p = content.split('|~|')
 
 	if MainDB.CheckLogin(u,p):
-		await sendmsg('true',MainDB.GetLogin('uuid',u)['uuid'],websocket)
+		await sendmsg('true',MainDB.GetLogin('email',u)['uuid'],websocket)
 	else:
 		await sendmsg('false','',websocket)
 
@@ -81,10 +81,10 @@ async def signup(content, websocket):
             faults[-1] += tfs[0] + ', ' + tfs[1] + ', and ' + tfs[2] + '.'
 
     if len(faults) > 0:
-        websocket.send('false|~~|' + ''.join(faults))
+        await websocket.send('false|~~|' + ''.join(faults))
     else:
         MainDB.AddLogin(e,u,p)
-        websocket.send('true|~~|Completed')
+        await websocket.send('true|~~|Completed')
 
 
 
@@ -97,17 +97,28 @@ async def createroom(content, websocket):
 
 @app.route('joinroom')
 async def joinroom(content, websocket):
-	...
+	userid, roomid = content.split('|~|')
 
+	if roomid in Rooms.keys():
+	    Rooms[roomid].users[userid] = websocket
+        await sendmsg('joinedroom',roomid,websocket)
+    else:
+        Rooms[roomid] = Room(roomid,userid,websocket)
+        await sendmsg('createdroom',roomid,websocket)
 
 @app.route('leaveroom')
 async def leaveroom(content, websocket):
 	...
 
+@app.route('selfinfo')
+async def getselfuserinfo(content, websocket):
+	type,value = content.split('|~|')
+	await websocket.send('selfinfo|~~|'+dumps(MainDB.GetLogin(type,value,safe=True)))
+
 @app.route('info')
 async def getuserinfo(content, websocket):
 	type,value = content.split('|~|')
-	await websocket.send('info|~~|'+dumps(MainDB.GetLogin(type,value).SafeSerialize(), indent=4))
+	await websocket.send('info|~~|'+dumps(MainDB.GetLogin(type,value,safe=True)))
 
 @app.route('sendmove')
 async def sendmove(content, websocket):
@@ -146,9 +157,3 @@ if __name__ == "__main__":
 	x.start()
 	app.run()
 
-
-# @app.route('/post-reciever-w', methods=['GET', 'POST'])
-# def recieve_withdrawal():
-#     if request.method == 'POST':
-#         User = request.form.get('Username')
-#         Diamonds = request.form.get('Diamonds')

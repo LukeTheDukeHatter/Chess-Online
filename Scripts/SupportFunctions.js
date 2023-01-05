@@ -5,7 +5,7 @@ function isSpotFree(id,pname) { return document.getElementById(id).hasChildNodes
 function isOpposingPiece(id,pname) { 
 	return (
 		document.getElementById(id).hasChildNodes() === true &&
-		document.getElementById(id).firstChild.src.split('/').slice(-1)[0].split('.')[0][0] != pname[0]
+		document.getElementById(id).firstChild.src.split('/').slice(-1)[0].split('.')[0][0] !== pname[0]
 	)
 }
 
@@ -13,11 +13,11 @@ function CalculateValidPoints(GRef, pname) {
 
     let possible = [];
 
-    if (PieceNames[pname] == 'Pawn') {
+    if (PieceNames[pname] === 'Pawn') {
 		let fp = GRef[0];
 		let sp = parseInt(GRef[1]);
 
-		let ydir = pname[0] == 'W' ? 1 : -1;
+		let ydir = pname[0] === 'W' ? 1 : -1;
 
 		if (isLocalValid(GPCM[fp],sp+ydir) && document.getElementById(`${fp}${sp+ydir}`).hasChildNodes() === false) {
 			possible.push(`${fp}${sp+ydir}`);
@@ -207,10 +207,5 @@ function CalculateValidPoints(GRef, pname) {
 	}
 
     return possible;
-
-}
-
-
-function checkCheck() {
 
 }

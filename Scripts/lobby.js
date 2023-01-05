@@ -1,11 +1,7 @@
 if (document.cookie) {
 	var daCookie = getCookie('uid')
 	if (daCookie) {
-		console.log('Found cookie');
-		console.log(daCookie);
-		console.log('there ya goooo')
 	} else {
-		console.log('No Cookie');
 		window.location.href = 'login.html';
 	}
 } else {
@@ -14,10 +10,7 @@ if (document.cookie) {
 
 const socket = new WebSocket('ws://localhost:8765');
 
-socket.onopen = () => { 
-	console.log('Connected to webserver');
-	send('info',`uuid|~|${getCookie('uid')}`);
-};
+socket.onopen = () => { send('selfinfo',`uuid|~|${getCookie('uid')}`); };
 
 function send(type,message) { socket.send(type+'|~~|'+message); }
 
@@ -27,7 +20,7 @@ let roomTemplate = `
 <br>
 <h2>Currently Connected:</h3>
 <h3>{{User1}}</h3>
-<h3>{{User2}}</h3>
+<h3><b style="color: transparent">{{User2}}</b></h3>
 
 <button style="margin-top: 1.5em;">Start game!</button>
 `;
@@ -45,16 +38,15 @@ socket.onmessage = (e) => {
 
 	var MidBox = document.getElementById('Holder');
 
-	type,data = e.data.split('|~~|');
+	let [type, data] = e.data.split('|~~|');
 
-	if (type == 'info') {
+	if (type === 'selfinfo') {
 
 		let dadata = JSON.parse(data);
 	
-		hasRoomId = getCookie('roomid');
-	
+		let hasRoomId = getCookie('roomid');
+
 		if (hasRoomId) {
-			// Render the room template
 			MidBox.innerHTML = roomTemplate.replace('{{User1}}', dadata['Username']).replace('{{Username}}', dadata['Username']).replace('{{RoomCode}}', hasRoomId);
 		} else {
 			// Render the init template
@@ -70,14 +62,16 @@ socket.onmessage = (e) => {
 
 			document.getElementById('newrb').addEventListener('click', (e) => {
 				socket.send('createroom|~~|'+getCookie('uid'));
-				
 			});
 
 		}
 
-	} else if (type == 'createdroom') {
+	} else if (type === 'createdroom') {
 		setCookie('roomid', data);
-		window.location.href = 'lobby.html';
+		send('joinroom', getCookie('uid') + '|~|' + data);
+	} else if (type === 'joinedroom') {
+		// It sends off the create room request to the server, the server then proceeds to ALWAYS send back a joinedroom message, even if the room did not exist before.
+
 	}
 }
 

@@ -13,7 +13,6 @@ function send(type,message) { socket.send(type+'|~~|'+message); }
 
 
 socket.onmessage = (e) => {
-	alert('Recieved');
 
 	let data = e.data.split('|~~|');
 	if (data[0] == 'true') {
@@ -22,13 +21,8 @@ socket.onmessage = (e) => {
 		date.setFullYear(date.getFullYear() + 1);
 		  
 		// April 20, 2023
-		console.log(date); // 2023-04-20T00:00:00.000Z
 
 		document.cookie += "uid="+data[1]+"; expires = "+date+"; path=/";
-		console.log(document.cookie.split('=')[0]);
-		console.log(document.cookie.split('=')[1]);
-		console.log(document.cookie.split('='));
-		console.log(document.cookie);
 		window.location.href = 'lobby.html';
 	} else {
 		alert('Invalid username or password');
@@ -43,7 +37,6 @@ theForm.addEventListener('submit', (e) => {
 	let pbox = document.getElementById('password');
 
 	let Message = 'login|~~|'+ubox.value+'|~|'+pbox.value;
-	console.log(Message);
 
 	socket.send(Message);
 
