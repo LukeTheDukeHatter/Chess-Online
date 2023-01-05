@@ -70,8 +70,12 @@ socket.onmessage = (e) => {
 		setCookie('roomid', data);
 		send('joinroom', getCookie('uid') + '|~|' + data);
 	} else if (type === 'joinedroom') {
-		// It sends off the create room request to the server, the server then proceeds to ALWAYS send back a joinedroom message, even if the room did not exist before.
 
+
+		// It sends off the create room request to the server, the server then proceeds to ALWAYS send back a joinedroom message, even if the room did not exist before.
+	} else if (type === 'otherjoin') {
+		let dadata = JSON.parse(data);
+		MidBox.innerHTML = MidBox.innerHTML.replace('<b style="color: transparent">{{User2}}</b>', dadata['Username']);
 	}
 }
 

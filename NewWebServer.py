@@ -104,7 +104,12 @@ async def joinroom(content, websocket):
         await sendmsg('joinedroom',roomid,websocket)
     else:
         Rooms[roomid] = Room(roomid,userid,websocket)
-        await sendmsg('createdroom',roomid,websocket)
+
+        for k,v in Rooms[roomid].users.items():
+            if k != userid:
+                await sendmsg('joinedroom',roomid,v)
+
+        await sendmsg('joinedroom',roomid,websocket)
 
 @app.route('leaveroom')
 async def leaveroom(content, websocket):
@@ -133,7 +138,7 @@ fapp = Flask(__name__)
 # ====================================================================
 # ===================-- Flask Library Web Server --===================
 # ====================================================================
-
+1
 fapp = Flask(__name__)
 
 @fapp.route('/robots.txt')
