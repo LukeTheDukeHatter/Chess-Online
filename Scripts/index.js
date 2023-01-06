@@ -1,6 +1,17 @@
+
+const socket = new WebSocket('ws://localhost:8765');
+function send(type,message) { socket.send(type+'|~~|'+message); }
+
+socket.onopen = () => { send('joingame') };
+
+
+// Need to make it join a game and start moving pieces
+
+
 if (document.cookie) {
 	if (getCookie('uid') && getCookie('roomid')) {
 		console.log('Valid cookies found');
+
 	} else {
 		if (getCookie('uid')) {
 			window.location.href = 'lobby.html';
@@ -136,20 +147,14 @@ function handleDrop(e) {
 
 // =====================-- Connect to websocket --=====================
 
-const socket = new WebSocket('ws://localhost:8765');
-
-function send(type,message) { socket.send(type+'|~~|'+message); }
-
-
-socket.onopen = () => { 
-	console.log('Connected to server');
-};
 
 
 socket.onmessage = (e) => {
-	var type,data = e.data.split('|~~|');
+	let [type,data] = e.data.split('|~~|');
 	if (type === 'move') {
-		var id1,id2 = data.split('|~|');
+		let [id1,id2] = data.split('|~|');
 		GameBoard.MakeMove(id1,id2);
+	} else if (type === 'joinedroom') {
+
 	}
 }

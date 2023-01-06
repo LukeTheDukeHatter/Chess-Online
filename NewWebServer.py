@@ -35,81 +35,94 @@ async def login(content, websocket):
 
 @app.route('signup')
 async def signup(content, websocket):
-    e,u,p = content.split('|~|')
+	e,u,p = content.split('|~|')
 
-    faults = []
+	faults = []
 
-    if MainDB.LoginExists(e):
-        faults.append('Email already in use. ')
-    if len(u) < 8 or len(u) > 16:
-        faults.append('Username is too ' + 'short' if len(u) < 8 else 'long')
+	if MainDB.LoginExists(e):
+		faults.append('Email already in use. ')
+	if len(u) < 8 or len(u) > 16:
+		faults.append('Username is too ' + 'short' if len(u) < 8 else 'long')
 
-    # Password checking
-    pf = 0
-    if len(p) < 8:
-        faults.append('Password is too short')
-    if len(p) > 50:
-        faults.append('Password is too long')
+	# Password checking
+	pf = 0
+	if len(p) < 8:
+		faults.append('Password is too short')
+	if len(p) > 50:
+		faults.append('Password is too long')
 
-    psc = 0
-    pnc = 0
-    pcc = 0
-    for c in p:
-        if c in '!@#$%&*<>/?(){}[]-=_+~':
-            psc += 1
-        elif c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-            pcc += 1
-        elif c in '0123456789':
-            pnc += 1
+	psc = 0
+	pnc = 0
+	pcc = 0
+	for c in p:
+		if c in '!@#$%&*<>/?(){}[]-=_+~':
+			psc += 1
+		elif c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+			pcc += 1
+		elif c in '0123456789':
+			pnc += 1
 
-    tfs = []
-    if psc == 0:
-        tfs.append('Symbol')
-    if pnc == 0:
-        tfs.append('Number')
-    if pcc == 0:
-        tfs.append('Capital Letter')
+	tfs = []
+	if psc == 0:
+		tfs.append('Symbol')
+	if pnc == 0:
+		tfs.append('Number')
+	if pcc == 0:
+		tfs.append('Capital Letter')
 
-    if len(tfs) > 0:
-        faults.append('Password needs at least one ')
+	if len(tfs) > 0:
+		faults.append('Password needs at least one ')
 
-        if len(tfs) == 1:
-            faults[-1] += tfs[0] + '.'
-        elif len(tfs) == 2:
-            faults[-1] += tfs[0] + ', and ' + tfs[1] + '.'
-        elif len(tfs) == 3:
-            faults[-1] += tfs[0] + ', ' + tfs[1] + ', and ' + tfs[2] + '.'
+		if len(tfs) == 1:
+			faults[-1] += tfs[0] + '.'
+		elif len(tfs) == 2:
+			faults[-1] += tfs[0] + ', and ' + tfs[1] + '.'
+		elif len(tfs) == 3:
+			faults[-1] += tfs[0] + ', ' + tfs[1] + ', and ' + tfs[2] + '.'
 
-    if len(faults) > 0:
-        await websocket.send('false|~~|' + ''.join(faults))
-    else:
-        MainDB.AddLogin(e,u,p)
-        await websocket.send('true|~~|Completed')
+	if len(faults) > 0:
+		await websocket.send('false|~~|' + ''.join(faults))
+	else:
+		MainDB.AddLogin(e,u,p)
+		await websocket.send('true|~~|Completed')
 
-
+	
 
 @app.route('createroom')
 async def createroom(content, websocket):
 	newcode = GenerateCode()
-	Rooms[newcode] = Room(newcode,content,websocket)
 	await sendmsg('createdroom',newcode,websocket)
 
 
 @app.route('joinroom')
 async def joinroom(content, websocket):
+	print('User refreshed')
+
 	userid, roomid = content.split('|~|')
 
-	if roomid in Rooms.keys():
-	    Rooms[roomid].users[userid] = websocket
-        await sendmsg('joinedroom',roomid,websocket)
-    else:
-        Rooms[roomid] = Room(roomid,userid,websocket)
 
-        for k,v in Rooms[roomid].users.items():
-            if k != userid:
-                await sendmsg('joinedroom',roomid,v)
 
-        await sendmsg('joinedroom',roomid,websocket)
+	if roomid in Rooms.keys() and not userid in Rooms[roomid].users.keys(): # Add user to room
+		Rooms[roomid].users[userid] = websocket
+		Followername = MainDB.GetLogin('uuid',userid)['Username']
+		ownuser = Followername
+	elif roomid in Rooms.keys() and userid in Rooms[roomid].users.keys(): # Update users websocket
+		Rooms[roomid].users[userid] = websocket
+		Followername = MainDB.GetLogin('uuid',[x for x in Rooms[roomid].users.keys() if x != Rooms[roomid].leader][0])['Username']
+		ownuser = MainDB.GetLogin('uuid',userid)['Username']
+	else: # create room and set user as leader
+		Rooms[roomid] = Room(roomid,userid,websocket)
+		Followername = 'Waiting for user'
+		ownuser = MainDB.GetLogin('uuid',userid)['Username']
+
+
+	Leadername = MainDB.GetLogin('uuid',Rooms[roomid].leader)['Username']
+	await sendmsg('joinedroom','''{"code":"--RoomCode--","leader":"--Leader--","follower":"--Follower--","self":"--ownuser--"}'''.replace('--RoomCode--',roomid).replace('--Leader--',Leadername).replace('--Follower--',Followername).replace('--ownuser--', ownuser), websocket)
+
+	for k,v in Rooms[roomid].users.items():
+		if k != userid:
+			await sendmsg('otherjoined',Followername,v)
+
 
 @app.route('leaveroom')
 async def leaveroom(content, websocket):
@@ -125,6 +138,11 @@ async def getuserinfo(content, websocket):
 	type,value = content.split('|~|')
 	await websocket.send('info|~~|'+dumps(MainDB.GetLogin(type,value,safe=True)))
 
+@app.route('startgame')
+async def start(content, websocket):
+	roomid,uid = content.split('|~|')
+	await Rooms[roomid].start(uid)
+
 @app.route('sendmove')
 async def sendmove(content, websocket):
 	sender,id1,id2 = content.split('|~|')
@@ -133,12 +151,9 @@ async def sendmove(content, websocket):
 			r.SendMove(sender,id1,id2)
 
 
-fapp = Flask(__name__)
-
-# ====================================================================
 # ===================-- Flask Library Web Server --===================
-# ====================================================================
-1
+
+
 fapp = Flask(__name__)
 
 @fapp.route('/robots.txt')
