@@ -89,20 +89,24 @@ function CalculateValidPoints(GRef, pname) {
 
 	} else if (PieceNames[pname] === 'Rook') {
 		let fp = GPCM[GRef[0]]; 
-		let sp = parseInt(GRef[1]); 
+		let sp = parseInt(GRef[1]);
 
-		var uip; // uip Stands for Uninpaired, used to stop checking squares in a direction once a piece is found to be blocking the path
+		let uip; // uip Stands for Uninpaired, used to stop checking squares in a direction once a piece is found to be blocking the path
 
 		uip = true;
 		for (let x = 1; x < 9; x++) { 	// Checks all squares to the right of the piece
 			let newx = fp+x;
 			let newy = sp;
 
-			if ( newx >= 0 && newx <= 7 ) { 
-				if (document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() === true) { uip = false; }
-				if (uip) {
-					if ( isSpotFree(`${GPCM[newx]}${newy}`,pname) )  {
+			if ( uip ) {
+				if (isLocalValid(newx, newy)) {
+					if (isSpotFree(`${GPCM[newx]}${newy}`, pname)) {
 						possible.push(`${GPCM[newx]}${newy}`);
+					} else {
+						uip = false;
+					}
+					if (isOpposingPiece(`${GPCM[newx]}${newy}`, pname)) {
+						uip = false;
 					}
 				}
 			}
@@ -113,11 +117,15 @@ function CalculateValidPoints(GRef, pname) {
 			let newx = fp+x;
 			let newy = sp;
 
-			if ( newx >= 0 && newx <= 7 ) { 
-				if (document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() === true) { uip = false; }
-				if (uip) {
-					if ( isSpotFree(`${GPCM[newx]}${newy}`,pname) )  {
+			if ( uip ) {
+				if (isLocalValid(newx, newy)) {
+					if (isSpotFree(`${GPCM[newx]}${newy}`, pname)) {
 						possible.push(`${GPCM[newx]}${newy}`);
+					} else {
+						uip = false;
+					}
+					if (isOpposingPiece(`${GPCM[newx]}${newy}`, pname)) {
+						uip = false;
 					}
 				}
 			}
@@ -127,27 +135,36 @@ function CalculateValidPoints(GRef, pname) {
 		for (let y = 1; y < 9; y++) { 	// Checks all squares above the piece
 			let newx = fp;
 			let newy = sp+y;
-			
-			if ( newy >= 1 && newy <= 8 ) {
-				if (document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() === true) { uip = false; }
-				if (uip) {
-					if ( isSpotFree(`${GPCM[newx]}${newy}`,pname) )  {
+
+			if ( uip ) {
+				if (isLocalValid(newx, newy)) {
+					if (isSpotFree(`${GPCM[newx]}${newy}`, pname)) {
 						possible.push(`${GPCM[newx]}${newy}`);
+					} else {
+						uip = false;
+					}
+					if (isOpposingPiece(`${GPCM[newx]}${newy}`, pname)) {
+						uip = false;
 					}
 				}
 			}
+
 		}								// End of up check
 		
 		uip = true;
 		for (let y = -1; y > -9; y--) { 	// Checks all squares below the piece
 			let newx = fp;
 			let newy = sp+y;
-			
-			if ( newy >= 1 && newy <= 8 ) { 
-				if (document.getElementById(`${GPCM[newx]}${newy}`).hasChildNodes() === true) { uip = false; }
-				if (uip) {
-					if ( isSpotFree(`${GPCM[newx]}${newy}`,pname) )  {
+
+			if ( uip ) {
+				if (isLocalValid(newx, newy)) {
+					if (isSpotFree(`${GPCM[newx]}${newy}`, pname)) {
 						possible.push(`${GPCM[newx]}${newy}`);
+					} else {
+						uip = false;
+					}
+					if (isOpposingPiece(`${GPCM[newx]}${newy}`, pname)) {
+						uip = false;
 					}
 				}
 			}

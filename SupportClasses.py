@@ -42,6 +42,10 @@ class ChessBoard:
         end = self.itc(e)
         self.board[end[0]][end[1]], self.board[start[0]][start[1]] = self.board[start[0]][start[1]], ' '
 
+    def set_piece(self,type,id):
+    	coord = self.itc(id)
+    	self.board[coord[0]][coord[1]] = type
+
     def itc(self,i): return (8-int(i[1]),ord(i[0])-97)
     def cti(self,r): return chr(r[1]+97) + str(8-r[0])
 
@@ -67,8 +71,16 @@ class Room():
 
 	async def SendMove(self,uid,id1,id2):
 		self.board.move_piece(id1,id2)
-		self.board.display()
+# 		self.board.display()
 		for u in self.users:
 			if u != uid:
 				await self.users[u].send('move|~~|'+id1+'|~|'+id2)
+
+	async def Promote(self,id,type):
+		self.board.set_piece(type,id)
+		self.board.display()
+
+		for u in self.users.keys():
+			await self.users[u].send('promote|~~|'+id+'|~|'+type)
+
 

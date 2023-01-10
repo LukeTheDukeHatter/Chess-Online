@@ -15,8 +15,6 @@ function getCookie(name) {
     return decodeURI(dc.substring(begin + prefix.length, end)).split(';')[0];
 }
 
-
-
 function setCookie(cName, cValue) {
     let expDays = 365;
     let date = new Date();
