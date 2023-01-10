@@ -30,7 +30,7 @@ function CalculateValidPoints(GRef, pname) {
 		})
 
 	} else if (PieceNames[pname] === 'Knight') {
-		let xnums = [-2,-1,0,1,2]; // The width  of the square to check within
+		let xnums = [-2,-1,0,1,2]; // The width of the square to check within
 		let ynums = [-2,-1,0,1,2]; // The height of the square to check within
 
 		let fp = GRef[0]; // The x grid reference of the original piece

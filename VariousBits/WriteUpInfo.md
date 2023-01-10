@@ -66,3 +66,72 @@ socket.onmessage = (event) => {
 ```
 With this javascript code shown above, it will connect to the open websocket on localhost port 8080, and then send a message to the server, which will then be recieved by the function defined in the server code, and printed into the servers console, and then the server will send a response back to the client, which will then be printed to the client-side console.
 
+
+# **index.js**
+This is the javascript file which contains the code for the actual client-side chess gameplay, such as working out valid moves, checking if it is the users turn or not, managing the connection to the webserver,
+
+```javascript
+socket.onmessage = (e) => {
+    let [type,data] = e.data.split('|~~|');
+    if (type === 'move') {
+        let [id1,id2] = data.split('|~|');
+        GameBoard.MakeMove(id1,id2);
+    } else if (type === 'gamedata') {
+        let jsondata = JSON.parse(data);
+        CurrentTeam = jsondata['team'];
+        GenerateGrid();
+    }
+}
+```
+
+
+# **lobby.html**
+
+```javascript
+socket.onmessage = (e) => {
+	let MidBox = document.getElementById('Holder');
+	let [type, data] = e.data.split('|~~|');
+
+	console.log(type);
+	console.log(data);
+
+	if (type === 'selfinfo') {
+		let userdata = JSON.parse(data);
+		let hasRoomId = getCookie('roomid');
+
+		if (hasRoomId) {
+			send('joinroom', `${getCookie('uid')}|~|${hasRoomId.toUpperCase()}`);
+		} else {
+			MidBox.innerHTML = renderHome(userdata['Username']);
+
+			document.getElementById('joinroomform').addEventListener('submit', (e) => {
+				e.preventDefault();
+				let roomform = document.getElementById('joinroomform');
+				let roomid = roomform.elements['room'].value;
+				send('joinroom', `${getCookie('uid')}|~|${roomid.toUpperCase()}`);
+			});
+			document.getElementById('newrb').addEventListener('click', () => { send('createroom', getCookie('uid')); });
+		}
+	} else if (type === 'createdroom') {
+		send('joinroom', getCookie('uid') + '|~|' + data);
+	} else if (type === 'joinedroom') {
+		let jsondata = JSON.parse(data);
+
+		let leadername = jsondata['leader'];
+		let code = jsondata['code'];
+		let followername = jsondata['follower'];
+		let ownname = jsondata['self'];
+
+		setCookie('roomid', code);
+
+		MidBox.innerHTML = roomTemplate.replace('{{User1}}', leadername).replace('{{User2}}', followername).replace('{{RoomCode}}', code).replace('{{Username}}', ownname);
+		document.getElementById('startbutton').addEventListener('click', () => { send('startgame', getCookie('roomid') + '|~|' + getCookie('uid')); });
+	} else if (type === 'otherjoined') {
+		MidBox.innerHTML = MidBox.innerHTML.replace('Waiting for user', data);
+		document.getElementById('startbutton').addEventListener('click', () => { send('startgame', getCookie('roomid') + '|~|' + getCookie('uid')); });
+	} else if (type === 'started') {
+		alert('Game started!');
+	}
+
+}
+```

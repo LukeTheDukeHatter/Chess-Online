@@ -20,8 +20,6 @@ socket.onmessage = (e) => {
 		const date = new Date();
 		date.setFullYear(date.getFullYear() + 1);
 		  
-		// April 20, 2023
-
 		document.cookie += "uid="+data[1]+"; expires = "+date+"; path=/";
 		window.location.href = 'lobby.html';
 	} else {

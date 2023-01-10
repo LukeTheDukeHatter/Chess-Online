@@ -23,3 +23,12 @@ document.querySelectorAll('.Wteam').forEach(i => { i.style.opacity = 0.5 });
 // https://levelup.gitconnected.com/chess-python-ca4532c7f5a4#:~:text=If%20its%20free%20that%20space,then%20that%20piece%20becomes%20killable.
 <br>
 // https://www.google.com/search?q=chess+when+is+a+piece+killable&rlz=1C1GCEA_enGB981GB981&oq=chess+when+is+a+piece+killable&aqs=chrome..69i57j33i160l2j33i22i29i30.5169j0j7&sourceid=chrome&ie=UTF-8
+
+
+
+
+
+[ ] Add in loading from server on room refresh
+[ ] Fix rook not being able to capture 
+[ ] add check and checkmate, add in 
+[ ] Win conditions

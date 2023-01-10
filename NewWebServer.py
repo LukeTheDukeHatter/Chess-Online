@@ -51,9 +51,8 @@ async def signup(content, websocket):
 	if len(p) > 50:
 		faults.append('Password is too long')
 
-	psc = 0
-	pnc = 0
-	pcc = 0
+	psc,pnc,pcc=0,0,0
+
 	for c in p:
 		if c in '!@#$%&*<>/?(){}[]-=_+~':
 			psc += 1
@@ -96,17 +95,13 @@ async def createroom(content, websocket):
 
 @app.route('joinroom')
 async def joinroom(content, websocket):
-	print('User refreshed')
-
 	userid, roomid = content.split('|~|')
-
-
 
 	if roomid in Rooms.keys() and not userid in Rooms[roomid].users.keys(): # Add user to room
 		Rooms[roomid].users[userid] = websocket
 		Followername = MainDB.GetLogin('uuid',userid)['Username']
 		ownuser = Followername
-	elif roomid in Rooms.keys() and userid in Rooms[roomid].users.keys(): # Update users websocket
+	elif roomid in Rooms.keys() and userid in Rooms[roomid].users.keys(): # Update users websocket<<
 		Rooms[roomid].users[userid] = websocket
 		Followername = MainDB.GetLogin('uuid',[x for x in Rooms[roomid].users.keys() if x != Rooms[roomid].leader][0])['Username']
 		ownuser = MainDB.GetLogin('uuid',userid)['Username']
@@ -143,16 +138,32 @@ async def start(content, websocket):
 	roomid,uid = content.split('|~|')
 	await Rooms[roomid].start(uid)
 
+@app.route('joingame')
+async def joingame(content, websocket):
+	roomid,userid = content.split('|~|')
+
+	Rooms[roomid].users[userid] = websocket
+
+	ownuser = MainDB.GetLogin('uuid',userid)['Username']
+
+	Leadername = MainDB.GetLogin('uuid',Rooms[roomid].leader)['Username']
+
+	team = 'W' if ownuser == Leadername else 'B'
+
+	await sendmsg('gamedata','''{"self":"--ownuser--","team":"--team--"}'''.replace('--team--',team).replace('--ownuser--', ownuser), websocket)
+
+
 @app.route('sendmove')
 async def sendmove(content, websocket):
 	sender,id1,id2 = content.split('|~|')
+
+	print(f"{sender} sent {id1} to {id2}")
+
 	for k,r in Rooms.items():
 		if sender in r.users:
-			r.SendMove(sender,id1,id2)
-
+			await r.SendMove(sender,id1,id2)
 
 # ===================-- Flask Library Web Server --===================
-
 
 fapp = Flask(__name__)
 

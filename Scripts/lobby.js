@@ -79,8 +79,7 @@ socket.onmessage = (e) => {
 		MidBox.innerHTML = MidBox.innerHTML.replace('Waiting for user', data);
 		document.getElementById('startbutton').addEventListener('click', () => { send('startgame', getCookie('roomid') + '|~|' + getCookie('uid')); });
 	} else if (type === 'started') {
-		alert('Game started!');
+		window.location.href = 'index.html';
 	}
-
 }
 
