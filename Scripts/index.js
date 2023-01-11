@@ -22,8 +22,8 @@ const Locals = {
 	"a8": "BRook",
 	"b8": "BKnight",
 	"c8": "BBishop",
-	"d8": "BQueen",
-	"e8": "BKing",
+	"d8": "BKing",
+	"e8": "BQueen",
 	"f8": "BBishop",
 	"g8": "BKnight",
 	"h8": "BRook",
@@ -38,8 +38,8 @@ const Locals = {
 	"a1": "WRook",
 	"b1": "WKnight",
 	"c1": "WBishop",
-	"d1": "WQueen",
-	"e1": "WKing",
+	"d1": "WKing",
+	"e1": "WQueen",
 	"f1": "WBishop",
 	"g1": "WKnight",
 	"h1": "WRook",
@@ -134,6 +134,7 @@ function GenerateGrid() {
 			let z = document.createElement('img'); 													// Creates an image element
 			z.src = `../Images/Pieces/${Locals[tid]}.png`; 											// Sets the image source to the corresponding piece image
 			z.className = 'PieceIcon'; 																// Sets the image classname to PieceIcon, and the piece type
+			z.Moved = false; 																		// Sets the Moved property to false, used for initial piece movement
 			y.appendChild(z); 																		// Adds the image to the div
 			GameBoard.SetSquare(tid,Locals[tid][0],StandardAbb[PieceNames[Locals[tid]]]); 			// Adds the piece to the Positions array
 		}
@@ -179,7 +180,6 @@ function handleDragOver(e) {
 }
 function handleDragEnter(e) { this.classList.add('over'); }
 function handleDragLeave(e) { this.classList.remove('over'); }
-
 function handleDrop(e) {
 
 	e.stopPropagation();
@@ -197,6 +197,7 @@ function handleDrop(e) {
 
 		GameBoard.MakeMove(dragSrcEl.id, this.id);
 		socket.send('sendmove|~~|'+getCookie('uid')+"|~|"+dragSrcEl.id+"|~|"+this.id);
+		this.firstChild.Moved = true;
 
 		let CheckSquare = CurrentTeam === 'W' ? '8' : '1';
 		console.log(CheckSquare);

@@ -23,6 +23,10 @@ function CalculateValidPoints(GRef, pname) {
 			possible.push(`${fp}${sp+ydir}`);
 		}
 
+		if (isLocalValid(GPCM[fp],sp+(ydir*2)) && document.getElementById(`${fp}${sp+(ydir*2)}`).hasChildNodes() === false && document.getElementById(`${fp}${sp}`).firstChild.Moved === false) {
+			possible.push(`${fp}${sp+(ydir*2)}`);
+		}
+
 		[-1,1].forEach(opt => {
 			if (isLocalValid(GPCM[fp]+opt,sp+ydir) && isOpposingPiece(`${GPCM[GPCM[fp]+opt]}${sp+ydir}`,pname)) {
 				possible.push(`${GPCM[GPCM[fp]+opt]}${sp+ydir}`);
