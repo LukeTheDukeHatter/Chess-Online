@@ -35,3 +35,7 @@ document.querySelectorAll('.Wteam').forEach(i => { i.style.opacity = 0.5 });
 [ ] add check and checkmate, add in 
 
 [ ] Win conditions
+
+
+
+Class Diagrams: SmartDraw

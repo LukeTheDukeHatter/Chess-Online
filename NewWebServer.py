@@ -177,12 +177,12 @@ async def promotepiece(content, websocket):
 async def won(content, websocket):
 	sender = content
 
-	for k,r in Rooms.items():
+	for k,r in Rooms.copy().items():
 		if sender in r.users.keys():
 			for x in r.users.keys():
 				if x != sender:
-					sendmsg('loss','a')
-
+					await sendmsg('loss','a',Rooms[k].users[x])
+			del Rooms[k]
 
 
 # ===================-- Flask Library Web Server --===================

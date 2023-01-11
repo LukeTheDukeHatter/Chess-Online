@@ -22,3 +22,11 @@ function setCookie(cName, cValue) {
     const expires = "expires=" + date.toUTCString();
     document.cookie = cName + "=" + cValue + "; " + expires + "; path=/";
 }
+
+function deleteCookie(cName) {
+    let cValue ='';
+    let date = new Date();
+    date.setTime(date.getTime() + 100);
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = cName + "=" + cValue + "; " + expires + "; path=/";
+}

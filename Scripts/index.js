@@ -184,21 +184,34 @@ function handleDrop(e) {
 
 	e.stopPropagation();
 	if (dragSrcEl !== this && this.classList.contains('valid')) {
+
+		if (this.hasChildNodes()) {
+			if (this.firstChild.src.endsWith(`${CurrentTeam === "W" ? "B" : "W"}King.png`)) {
+				send('win',getCookie('uid'));
+				alert('You win!');
+				deleteCookie('roomid');
+				window.location.href='lobby.html';
+			}
+		}
+
+
 		GameBoard.MakeMove(dragSrcEl.id, this.id);
 		socket.send('sendmove|~~|'+getCookie('uid')+"|~|"+dragSrcEl.id+"|~|"+this.id);
 
 		let CheckSquare = CurrentTeam === 'W' ? '8' : '1';
 		console.log(CheckSquare);
 		if (this.id[1] === CheckSquare) {
-			console.log(this.firstChild.src);
-			if (this.firstChild.src.endsWith(`${CurrentTeam}Pawn.png`)) {
-				let vo = ['rook','bishop','queen','knight'];
-				let c = '';
-				while (!vo.includes(c)) {
-					c = prompt('What would you like to promote your pawn to? (Rook, Bishop, Queen, Knight)').toLowerCase();
+			if (this.hasChildNodes()) {
+				if (this.firstChild.src.endsWith(`${CurrentTeam}Pawn.png`)) {
+					let vo = ['rook','bishop','queen','knight'];
+					let c = '';
+					while (!vo.includes(c)) {
+						c = prompt('What would you like to promote your pawn to? (Rook, Bishop, Queen, Knight)').toLowerCase();
+					}
+					send('promote',`${getCookie('uid')}|~|${this.id}|~|${CurrentTeam}${c.charAt(0).toUpperCase() + c.slice(1)}`);
 				}
-				send('promote',`${getCookie('uid')}|~|${this.id}|~|${CurrentTeam}${c.charAt(0).toUpperCase() + c.slice(1)}`);
 			}
+
 		}
 
 		SwapMove();
@@ -231,10 +244,12 @@ socket.onmessage = (e) => {
 		GenerateGrid();
 	} else if (type === 'promote') {
 		let [id,type] = data.split('|~|');
-		GameBoard.SetSquare(type[0],type.slice(1),id)
+		GameBoard.SetSquare(id,type[0],type.slice(1))
 		let sq = document.getElementById(id);
 		sq.firstChild.src = `../Images/Pieces/${type}.png`;
 	} else if (type === 'loss') {
 		alert('You have lost.');
+		deleteCookie('roomid');
+		window.location.href='lobby.html';
 	}
 }

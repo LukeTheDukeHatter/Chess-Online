@@ -41,7 +41,7 @@ class Board {
 		y.innerHTML = x.innerHTML;
 		x.innerHTML = "";
 		y.firstChild.style.opacity = '1';
-		this.turn = this.turn == "White" ? "Black" : "White";
+		this.turn = this.turn === "White" ? "Black" : "White";
 	}
 
 	CheckWin() {
