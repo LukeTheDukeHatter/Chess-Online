@@ -23,6 +23,8 @@ let roomTemplate = `
 <h3>{{User2}}</h3>
 
 <button style="margin-top: 1.5em;" id="startbutton">Start game!</button>
+
+<button style="height: 25px; width:50px;" onclick="send('abort',getCookie('uid')); deleteCookie('roomid'); window.location.href='lobby.html'">Leave.</button>
 `;
 
 let initTemplate = `
@@ -74,12 +76,21 @@ socket.onmessage = (e) => {
 		setCookie('roomid', code);
 
 		MidBox.innerHTML = roomTemplate.replace('{{User1}}', leadername).replace('{{User2}}', followername).replace('{{RoomCode}}', code).replace('{{Username}}', ownname);
-		document.getElementById('startbutton').addEventListener('click', () => { send('startgame', getCookie('roomid') + '|~|' + getCookie('uid')); });
+		if (ownname === leadername) {
+			document.getElementById('startbutton').addEventListener('click', () => { alert('You need a second player first!'); });
+		} else {
+			document.getElementById('startbutton').addEventListener('click', () => { alert('You are not the leader!'); });
+			}
+
 	} else if (type === 'otherjoined') {
 		MidBox.innerHTML = MidBox.innerHTML.replace('Waiting for user', data);
 		document.getElementById('startbutton').addEventListener('click', () => { send('startgame', getCookie('roomid') + '|~|' + getCookie('uid')); });
 	} else if (type === 'started') {
 		window.location.href = 'index.html';
+	} else if (type === 'abort') {
+		deleteCookie('roomid');
+		alert('The other player has left, the room will now be closed.');
+		window.location.href = 'lobby.html';
 	}
 }
 

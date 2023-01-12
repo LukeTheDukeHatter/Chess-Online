@@ -31,17 +31,16 @@ function CalculateValidPoints(GRef, pname) {
 			if (isLocalValid(GPCM[fp]+opt,sp+ydir) && isOpposingPiece(`${GPCM[GPCM[fp]+opt]}${sp+ydir}`,pname)) {
 				possible.push(`${GPCM[GPCM[fp]+opt]}${sp+ydir}`);
 			}
-		})
+		});
 
 	} else if (PieceNames[pname] === 'Knight') {
-		let xnums = [-2,-1,0,1,2]; // The width of the square to check within
-		let ynums = [-2,-1,0,1,2]; // The height of the square to check within
+		let indexs = [-2,-1,0,1,2]; // The height & width of the square to check within
 
 		let fp = GRef[0]; // The x grid reference of the original piece
 		let sp = GRef[1]; // The y grid reference of the original piece
 
-		xnums.forEach((x) => {
-			ynums.forEach((y) => {
+		indexs.forEach((x) => {
+			indexs.forEach((y) => {
 				let newx = (GPCM[fp]+x); // The x value of the next point we're checking
 				let newy = (parseInt(sp)+y); // The y value of the next point we're checking
 

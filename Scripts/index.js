@@ -17,7 +17,7 @@ const socket = new WebSocket('ws://localhost:8765');
 function send(type,message) { socket.send(type+'|~~|'+message); }
 socket.onopen = () => { send('joingame',getCookie('roomid')+'|~|'+getCookie('uid') ) };
 
-
+/*
 const Locals = {
 	"a8": "BRook",
 	"b8": "BKnight",
@@ -52,6 +52,8 @@ const Locals = {
 	"g2": "WPawn",
 	"h2": "WPawn"
 };
+*/
+
 const PieceNames = {
 	"WKing": "King",
 	"WQueen": "Queen",
@@ -95,7 +97,7 @@ const ChessGrid = document.getElementById('MainGrid');
 let GameBoard = new Board();
 let items = document.querySelectorAll('.GridSquare');
 let CurrentTeam = '';
-var CurrentMove = 'W';
+var CurrentMove = '';
 
 function SwapMove() { CurrentMove = CurrentMove === 'W' ? 'B' : 'W'; }
 
@@ -122,7 +124,7 @@ function RefreshDragging() {
 
 function ResetItemSelector() { items = document.querySelectorAll('.GridSquare'); }
 
-function GenerateGrid() {
+function GenerateGrid(Locals,MovedGrid) {
 
 	for (let x = 0; x < 64; x++) { 																	// Creates all 64 grid squares
 		let y = document.createElement('div'); 														// Creates a div element
@@ -134,7 +136,7 @@ function GenerateGrid() {
 			let z = document.createElement('img'); 													// Creates an image element
 			z.src = `../Images/Pieces/${Locals[tid]}.png`; 											// Sets the image source to the corresponding piece image
 			z.className = 'PieceIcon'; 																// Sets the image classname to PieceIcon, and the piece type
-			z.Moved = false; 																		// Sets the Moved property to false, used for initial piece movement
+			z.Moved = MovedGrid[tid]; 																		// Sets the Moved property to false, used for initial piece movement
 			y.appendChild(z); 																		// Adds the image to the div
 			GameBoard.SetSquare(tid,Locals[tid][0],StandardAbb[PieceNames[Locals[tid]]]); 			// Adds the piece to the Positions array
 		}
@@ -242,7 +244,26 @@ socket.onmessage = (e) => {
 	} else if (type === 'gamedata') {
 		let jsondata = JSON.parse(data);
 		CurrentTeam = jsondata['team'];
-		GenerateGrid();
+		CurrentMove = jsondata['turn'];
+
+		let CG = {};
+		let MG = {};
+
+		Object.entries(jsondata['cgrid']).forEach(entry => {
+			const [key, value] = entry;
+			console.log(value);
+			if (value['type'] !== " ") {
+				CG[key] = value['type']
+				MG[key] = value['moved'];
+			}
+		});
+
+		console.log('CG:')
+		console.log(CG);
+		console.log('MG:')
+		console.log(MG);
+
+		GenerateGrid(CG,MG);
 	} else if (type === 'promote') {
 		let [id,type] = data.split('|~|');
 		GameBoard.SetSquare(id,type[0],type.slice(1))
@@ -250,6 +271,13 @@ socket.onmessage = (e) => {
 		sq.firstChild.src = `../Images/Pieces/${type}.png`;
 	} else if (type === 'loss') {
 		alert('You have lost.');
+		deleteCookie('roomid');
+		window.location.href='lobby.html';
+	} else if (type === 'abortjoin') {
+		deleteCookie('roomid');
+		window.location.href='lobby.html';
+	} else if (type === 'abort') {
+		alert('The other player has left, you win by forfeit.');
 		deleteCookie('roomid');
 		window.location.href='lobby.html';
 	}

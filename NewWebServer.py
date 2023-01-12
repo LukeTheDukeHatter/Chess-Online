@@ -5,6 +5,7 @@ import threading
 from flask import Flask, redirect, url_for, send_file, send_from_directory, abort
 from json import dumps
 from random import choice
+from json import dumps
 
 
 # ====================================================================
@@ -142,16 +143,24 @@ async def start(content, websocket):
 async def joingame(content, websocket):
 	roomid,userid = content.split('|~|')
 
-	Rooms[roomid].users[userid] = websocket
+	if roomid in Rooms.keys():
+		if userid in Rooms[roomid].users.keys():
+			Rooms[roomid].users[userid] = websocket
 
-	ownuser = MainDB.GetLogin('uuid',userid)['Username']
+			ownuser = MainDB.GetLogin('uuid',userid)['Username']
 
-	Leadername = MainDB.GetLogin('uuid',Rooms[roomid].leader)['Username']
+			Leadername = MainDB.GetLogin('uuid',Rooms[roomid].leader)['Username']
 
-	team = 'W' if ownuser == Leadername else 'B'
+			team = 'W' if ownuser == Leadername else 'B'
 
-	await sendmsg('gamedata','''{"self":"--ownuser--","team":"--team--"}'''.replace('--team--',team).replace('--ownuser--', ownuser), websocket)
+			roomdata = Rooms[roomid].board.dictorize()
+			cturn = Rooms[roomid].board.Turn
 
+			await sendmsg('gamedata',f"{'{'}\"self\":\"{ ownuser }\",\"turn\":\"{ cturn }\",\"team\":\"{ team }\",\"cgrid\":{ dumps(roomdata).replace('False','false').replace('True','true') } {'}'}",websocket)
+		else:
+			await sendmsg('abortjoin','User not within room',websocket)
+	else:
+		await sendmsg('abortjoin','Invalid RoomID',websocket)
 
 @app.route('sendmove')
 async def sendmove(content, websocket):
@@ -162,6 +171,7 @@ async def sendmove(content, websocket):
 	for k,r in Rooms.items():
 		if sender in r.users:
 			await r.SendMove(sender,id1,id2)
+			r.board.moved()
 
 @app.route('promote')
 async def promotepiece(content, websocket):
@@ -184,6 +194,16 @@ async def won(content, websocket):
 					await sendmsg('loss','a',Rooms[k].users[x])
 			del Rooms[k]
 
+@app.route('abort')
+async def abort(content, websocket):
+	sender = content
+
+	for k,r in Rooms.copy().items():
+		if sender in r.users.keys():
+			for x in r.users.keys():
+				if x != sender:
+					await sendmsg('abort','a',Rooms[k].users[x])
+			del Rooms[k]
 
 # ===================-- Flask Library Web Server --===================
 
