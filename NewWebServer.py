@@ -81,7 +81,7 @@ async def signup(content, websocket):
 			faults[-1] += tfs[0] + ', ' + tfs[1] + ', and ' + tfs[2] + '.'
 
 	if len(faults) > 0:
-		await websocket.send('false|~~|' + ''.join(faults))
+		await websocket.send('false|~~|' + '\n'.join(faults))
 	else:
 		MainDB.AddLogin(e,u,p)
 		await websocket.send('true|~~|Completed')
