@@ -166,8 +166,6 @@ async def joingame(content, websocket):
 async def sendmove(content, websocket):
 	sender,id1,id2 = content.split('|~|')
 
-# 	print(f"{sender} sent {id1} to {id2}")
-
 	for k,r in Rooms.items():
 		if sender in r.users:
 			await r.SendMove(sender,id1,id2)
@@ -176,8 +174,6 @@ async def sendmove(content, websocket):
 @app.route('promote')
 async def promotepiece(content, websocket):
 	sender,id,type = content.split('|~|')
-
-# 	print(f"{sender} promoted to a {type} in {id}")
 
 	for k,r in Rooms.items():
 		if sender in r.users.keys():
@@ -204,6 +200,11 @@ async def abort(content, websocket):
 				if x != sender:
 					await sendmsg('abort','a',Rooms[k].users[x])
 			del Rooms[k]
+
+@app.route('removeroom')
+async def removeroom(content, websocket):
+	if content in Rooms.keys():
+		del Rooms[content]
 
 # ===================-- Flask Library Web Server --===================
 

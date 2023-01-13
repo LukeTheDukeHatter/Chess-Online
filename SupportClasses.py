@@ -30,9 +30,9 @@ class SocketHandler:
 class ChessBoard:
 	def __init__(self):
 
-		Locals = {"a8":"BRook","b8":"BKnight","c8":"BBishop","d8":"BQueen","e8":"BKing","f8":"BBishop","g8":"BKnight","h8":"BRook",
+		Locals = {"a8":"BRook","b8":"BKnight","c8":"BBishop","d8":"BKing","e8":"BQueen","f8":"BBishop","g8":"BKnight","h8":"BRook",
 				"a7":"BPawn","b7":"BPawn","c7":"BPawn","d7":"BPawn","e7":"BPawn","f7":"BPawn","g7":"BPawn","h7":"BPawn",
-				"a1":"WRook","b1":"WKnight","c1":"WBishop","d1":"WQueen","e1":"WKing","f1":"WBishop","g1":"WKnight","h1":"WRook",
+				"a1":"WRook","b1":"WKnight","c1":"WBishop","d1":"WKing","e1":"WQueen","f1":"WBishop","g1":"WKnight","h1":"WRook",
 				"a2":"WPawn","b2":"WPawn","c2":"WPawn","d2":"WPawn","e2":"WPawn","f2":"WPawn","g2":"WPawn","h2":"WPawn"}
 
 		self.Turn = 'W'
@@ -90,7 +90,7 @@ class Room():
 
 	async def Promote(self,id,type):
 		self.board.set_piece(type,id)
-		self.board.display()
+# 		self.board.display()
 
 		for u in self.users.keys():
 			await self.users[u].send('promote|~~|'+id+'|~|'+type)

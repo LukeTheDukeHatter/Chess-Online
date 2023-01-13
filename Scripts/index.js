@@ -13,46 +13,11 @@ if (document.cookie) {
 	window.location.href = 'login.html';
 }
 
-const socket = new WebSocket('ws://localhost:8765');
+let socket = new WebSocket('ws://localhost:8765');
 function send(type,message) { socket.send(type+'|~~|'+message); }
-socket.onopen = () => { send('joingame',getCookie('roomid')+'|~|'+getCookie('uid') ) };
 
-/*
-const Locals = {
-	"a8": "BRook",
-	"b8": "BKnight",
-	"c8": "BBishop",
-	"d8": "BKing",
-	"e8": "BQueen",
-	"f8": "BBishop",
-	"g8": "BKnight",
-	"h8": "BRook",
-	"a7": "BPawn",
-	"b7": "BPawn",
-	"c7": "BPawn",
-	"d7": "BPawn",
-	"e7": "BPawn",
-	"f7": "BPawn",
-	"g7": "BPawn",
-	"h7": "BPawn",
-	"a1": "WRook",
-	"b1": "WKnight",
-	"c1": "WBishop",
-	"d1": "WKing",
-	"e1": "WQueen",
-	"f1": "WBishop",
-	"g1": "WKnight",
-	"h1": "WRook",
-	"a2": "WPawn",
-	"b2": "WPawn",
-	"c2": "WPawn",
-	"d2": "WPawn",
-	"e2": "WPawn",
-	"f2": "WPawn",
-	"g2": "WPawn",
-	"h2": "WPawn"
-};
-*/
+socket.onopen = () => { send('joingame',getCookie('roomid')+'|~|'+getCookie('uid') ) };
+socket.onclose = (e) => { setTimeout(() => { socket = new WebSocket('ws://localhost:8765'); }, 1000) }
 
 const PieceNames = {
 	"WKing": "King",
@@ -129,14 +94,16 @@ function GenerateGrid(Locals,MovedGrid) {
 	for (let x = 0; x < 64; x++) { 																	// Creates all 64 grid squares
 		let y = document.createElement('div'); 														// Creates a div element
 		let tid = CurrentTeam === "W" ? `${Letters[x%8]}${8-Math.floor(x/8)}` : `${Letters[8-(x%8)-1]}${Math.floor(x/8)+1}`; // Creates the square ID
-		y.className = tid in Locals ? 'GridSquare ' + Locals[tid][0] + 'team' : 'GridSquare'; 		// Gives it the GridSquare classname
+		y.className = 'GridSquare'; 																// Gives it the GridSquare classname
 		y.id = tid; 																				// Assigns the ID to the div
 		y.draggable = true; 																		// Enables the HTML5 Drag and Drop API for all squares
 		if (tid in Locals) { 																		// Checks if the square requires a piece to be initially placed on it
 			let z = document.createElement('img'); 													// Creates an image element
 			z.src = `../Images/Pieces/${Locals[tid]}.png`; 											// Sets the image source to the corresponding piece image
-			z.className = 'PieceIcon'; 																// Sets the image classname to PieceIcon, and the piece type
-			z.Moved = MovedGrid[tid]; 																		// Sets the Moved property to false, used for initial piece movement
+			z.className = 'PieceIcon';
+			z.classList.add(Locals[tid].endsWith('King') ? `${Locals[tid][0]}King` : `${Locals[tid][0]}TeamPiece`);
+
+			z.Moved = MovedGrid[tid]; 																// Sets the Moved property to false, used for initial piece movement
 			y.appendChild(z); 																		// Adds the image to the div
 			GameBoard.SetSquare(tid,Locals[tid][0],StandardAbb[PieceNames[Locals[tid]]]); 			// Adds the piece to the Positions array
 		}
@@ -190,7 +157,7 @@ function handleDrop(e) {
 		if (this.hasChildNodes()) {
 			if (this.firstChild.src.endsWith(`${CurrentTeam === "W" ? "B" : "W"}King.png`)) {
 				send('win',getCookie('uid'));
-				alert('You win!');
+				alert('You win by king capture!');
 				deleteCookie('roomid');
 				window.location.href='lobby.html';
 			}
@@ -201,8 +168,21 @@ function handleDrop(e) {
 		socket.send('sendmove|~~|'+getCookie('uid')+"|~|"+dragSrcEl.id+"|~|"+this.id);
 		this.firstChild.Moved = true;
 
+		let TCM = FindCheckMate();
+
+		if (TCM !== false) {
+			if (TCM === CurrentTeam) {
+				alert('You win by checkmate!');
+				deleteCookie('roomid');
+				window.location.href = 'lobby.html';
+			} else {
+				alert('You have lost by checkmate.');
+				deleteCookie('roomid');
+				window.location.href='lobby.html';
+			}
+		}
+
 		let CheckSquare = CurrentTeam === 'W' ? '8' : '1';
-		console.log(CheckSquare);
 		if (this.id[1] === CheckSquare) {
 			if (this.hasChildNodes()) {
 				if (this.firstChild.src.endsWith(`${CurrentTeam}Pawn.png`)) {
@@ -233,14 +213,29 @@ function handleDrop(e) {
 
 socket.onmessage = (e) => {
 	let [type,data] = e.data.split('|~~|');
-	console.log(e.data);
 
 	if (type === 'move') {
 		let [id1,id2] = data.split('|~|');
 		GameBoard.MakeMove(id1,id2);
 		SwapMove();
-		console.log(CurrentMove);
 		RefreshDragging();
+
+		let TCM = FindCheckMate();
+
+		if (TCM !== false) {
+			if (TCM === CurrentTeam) {
+				send('removeroom',getCookie('roomid'));
+				alert('You win by checkmate!');
+				deleteCookie('roomid');
+				window.location.href = 'lobby.html';
+			} else {
+				send('removeroom',getCookie('roomid'));
+				alert('You have lost by checkmate.');
+				deleteCookie('roomid');
+				window.location.href='lobby.html';
+			}
+		}
+
 	} else if (type === 'gamedata') {
 		let jsondata = JSON.parse(data);
 		CurrentTeam = jsondata['team'];
@@ -251,17 +246,11 @@ socket.onmessage = (e) => {
 
 		Object.entries(jsondata['cgrid']).forEach(entry => {
 			const [key, value] = entry;
-			console.log(value);
 			if (value['type'] !== " ") {
 				CG[key] = value['type']
 				MG[key] = value['moved'];
 			}
 		});
-
-		console.log('CG:')
-		console.log(CG);
-		console.log('MG:')
-		console.log(MG);
 
 		GenerateGrid(CG,MG);
 	} else if (type === 'promote') {
