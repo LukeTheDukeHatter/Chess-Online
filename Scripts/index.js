@@ -6,6 +6,7 @@ if (document.cookie) {
 		if (getCookie('uid')) { // Has only uid
 			window.location.href = 'lobby.html';
 		} else {
+			deleteCookie('roomid');
 			window.location.href = 'login.html'; // Has no cookies or only roomid
 		}
 	}

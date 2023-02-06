@@ -5,12 +5,6 @@
     "Password": "ed74a98108bb2c7c16d5ef27e70205edcc4e492f3f79cb16b8f064638233ae0e",
     "uuid": "4569163fb6ae3a75b4dabd265b1c86e5393ea7830ca3b4fb0ee80c192f2f2942"
   },
-  "luketheduke.harrison@gmail.com": {
-    "Email": "luketheduke.harrison@gmail.com",
-    "Username": "LuukeTheKing",
-    "Password": "ed74a98108bb2c7c16d5ef27e70205edcc4e492f3f79cb16b8f064638233ae0e",
-    "uuid": "9d5cb7f3612f9170903825b8701ceb831e56ad6ace7fac4d9d6055ccb0277d40"
-  },
   "user1@testmail.net": {
     "Email": "user1@testmail.net",
     "Username": "Username1",
@@ -22,5 +16,11 @@
     "Username": "Username2",
     "Password": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
     "uuid": "b6bb37757b5ba8d2f448f4ebcd2ad23fde75171372d2d0aeac9c008fb3858410"
+  },
+  "luketheduke.harrison@gmail.com": {
+    "Email": "luketheduke.harrison@gmail.com",
+    "Username": "LuukeTheKing",
+    "Password": "ed74a98108bb2c7c16d5ef27e70205edcc4e492f3f79cb16b8f064638233ae0e",
+    "uuid": "9d5cb7f3612f9170903825b8701ceb831e56ad6ace7fac4d9d6055ccb0277d40"
   }
 }

@@ -3,7 +3,7 @@ from json import dumps, loads
 from os.path import exists
 
 
-class Login():
+class Login:
     def __init__(self, email: str = "", username: str = "", password: str = "", JSONData: dict = None):
         if JSONData is None:
             self.uuid = sha256(email.encode('utf-8')).hexdigest()
@@ -29,7 +29,7 @@ class Login():
         return {k: v for k, v in self.Serialize().items() if k not in ['Password', 'uuid']}
 
 
-class DataBase():
+class DataBase:
     def __init__(self, filename: str):
         self.Logins = {}
         self.Filename = filename
@@ -38,15 +38,18 @@ class DataBase():
         else:
             self.UpdateFile()
 
-    def UpdateFile(self) -> dict:
+    def Generate2FACode(self, e: str) -> str:
+        return sha256(e.encode('utf-8')).hexdigest()[:6]
+
+    def UpdateFile(self):
         with open(f"./Databases/{self.Filename}.json", 'w') as f:
             f.write(dumps({k: v.Serialize() for k, v in self.Logins.items()}))
 
-    def LoadFile(self) -> dict:
+    def LoadFile(self):
         with open(f"./Databases/{self.Filename}.json", 'r') as f:
             self.Logins = {k: Login(JSONData=v) for k, v in loads(f.read()).items()}
 
-    def AddLogin(self, email: str, username: str, password: str) -> bool:
+    def AddLogin(self, email: str, username: str, password: str):
         self.Logins[email] = (Login(email=email, username=username, password=password))
         self.UpdateFile()
 

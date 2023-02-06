@@ -43,15 +43,4 @@ class Board {
 		y.firstChild.style.opacity = '1';
 		this.turn = this.turn === "White" ? "Black" : "White";
 	}
-
-	CheckWin() {
-		BlackCheck = false;
-		WhiteCheck = false;
-		AllPlayable = [];
-		for (row in this.grid) {
-			for (thing in row) {
-				CalculateValidPoints(thing.id,)
-			}
-		}
-	}
 }
