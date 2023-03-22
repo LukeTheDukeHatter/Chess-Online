@@ -15,7 +15,7 @@ from json import dumps
 
 app = SocketHandler('localhost', 8765)
 MainDB = DataBase('maindb')
-MessageSystem = MailServer("luuke.autobot@gmail.com", "xyfktfhordonfgxt")
+MessageSystem = MailServer("--email--", "--password--")
 Rooms = {}
 CodesWaiting = {}
 
